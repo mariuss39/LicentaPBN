@@ -7,13 +7,18 @@ import androidx.cardview.widget.CardView;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,12 +37,10 @@ public class LoginActivity extends AppCompatActivity {
     Button button_login;
     FirebaseAuth firebaseAuth;
     ProgressBar progressBar;
-    TextView textView;
 
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if(currentUser != null){
             Intent loginSuccessfulIntent=new Intent(getApplicationContext(),MainActivityUser.class);
@@ -52,6 +55,32 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initializeComponents();
+        tiet_username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    String username = tiet_username.getText().toString();
+                    if (!isValidUsername(username)) {
+                        tiet_username.setError("Invalid email format");
+                    } else {
+                        tiet_username.setError(null);
+                    }
+                }
+            }
+        });
+        tiet_password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    button_login.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         button_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +116,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
+
+    private boolean isValidUsername(String username) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(tiet_username.getText()).matches();
+    }
+
     void initializeComponents(){
         firebaseAuth=FirebaseAuth.getInstance();
         CardView cardView = findViewById(R.id.card_view_login_form_login);
