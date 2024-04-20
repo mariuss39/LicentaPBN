@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "505159604850",
+    "project_id": "licentapbn",
+    "storage_bucket": "licentapbn.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:505159604850:android:0e9c53edbd3dccbdcbc0eb",
+        "android_client_info": {
+          "package_name": "com.example.licentapbn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOw2OoJq3BXZ9GmhSjyZvJzy9ksftnFIA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
