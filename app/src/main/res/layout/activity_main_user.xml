@@ -42,7 +42,7 @@
         android:layout_marginTop="4dp"
         android:text="We are connected."
         android:textColor="@color/blue_navy"
-        android:textSize="14dp"
+        android:textSize="14sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toStartOf="@+id/vertical_guideline1_45"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1_10"
