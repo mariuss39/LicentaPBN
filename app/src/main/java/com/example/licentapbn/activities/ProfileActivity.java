@@ -1,8 +1,10 @@
-package com.example.licentapbn;
+package com.example.licentapbn.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.licentapbn.R;
 
 public class ProfileActivity extends AppCompatActivity {
 

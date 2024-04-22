@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_marginTop="16dp"
     android:theme="@style/Theme.LicentaPBN"
-    tools:context=".MainActivityUser">
+    tools:context=".activities.MainActivityUser">
 
     <TextView
         android:id="@+id/twoyou_name"

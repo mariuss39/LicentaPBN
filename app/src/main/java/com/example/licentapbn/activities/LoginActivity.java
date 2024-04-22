@@ -1,23 +1,14 @@
-package com.example.licentapbn;
+package com.example.licentapbn.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
@@ -27,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.licentapbn.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
