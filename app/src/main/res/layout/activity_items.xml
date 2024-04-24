@@ -8,11 +8,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
-    android:id="@+id/recycleview_items"
+    android:id="@+id/recyclerview_items_container"
     android:layout_height="wrap_content"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/button22"/>
+    app:layout_constraintTop_toBottomOf="@id/button22" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     <Button
         app:layout_constraintTop_toTopOf="parent"
@@ -23,17 +23,6 @@
         android:text="Button"
         tools:layout_editor_absoluteX="47dp"
         tools:layout_editor_absoluteY="685dp"
-        tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/button222"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button22"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="251dp"
-        tools:layout_editor_absoluteY="683dp"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

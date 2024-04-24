@@ -38,6 +38,7 @@ public class FirebaseSingleton {
         return firebaseSingleton;
     }
 
+    //members actions
     public void insert(Member member) {
 //        if (member == null || (member.getId() != null && !member.getId().trim().isEmpty())) {
 //            return;
@@ -60,6 +61,8 @@ public class FirebaseSingleton {
         }
         membersReference.child(member.getId()).removeValue();
     }
+
+    //items action
     public void insertItem(Item item) {
 //        if (member == null || (member.getId() != null && !member.getId().trim().isEmpty())) {
 //            return;
@@ -67,6 +70,7 @@ public class FirebaseSingleton {
         String id = itemsReference.push().getKey();
         item.setId(id);
         itemsReference.child(item.getId()).setValue(item);
+
     }
 
     public void attachMemberDataChangeEventListener(Callback<List<Member>> callback){
