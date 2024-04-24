@@ -51,7 +51,7 @@ public class MainActivityUser extends AppCompatActivity {
         itemsCardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"ceva",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"ceva",Toast.LENGTH_SHORT).show();
                 Intent itemsActivityIntent=new Intent(getApplicationContext(), ItemsActivity.class);
                 startActivity(itemsActivityIntent);
 

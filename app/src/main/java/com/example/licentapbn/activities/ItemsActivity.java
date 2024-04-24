@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemsActivity extends AppCompatActivity {
-    Button b11;
     List<Item> items = new ArrayList<>();
     RecyclerView recyclerView;
     ProgressDialog progressDialog;
@@ -58,7 +57,7 @@ public class ItemsActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
 
         progressDialog.show();
-        b11 = findViewById(R.id.button22);
+
         recyclerView=findViewById(R.id.recyclerview_items_container);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -69,12 +68,6 @@ public class ItemsActivity extends AppCompatActivity {
         dataChangdListener();
 
         Toast.makeText(getApplicationContext(), "S-a bagat inoel in lista", Toast.LENGTH_SHORT).show();
-        b11.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "S-a bagat inoel in lista", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void dataChangdListener() {
