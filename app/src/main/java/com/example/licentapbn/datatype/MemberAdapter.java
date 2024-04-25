@@ -2,7 +2,9 @@ package com.example.licentapbn.datatype;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +13,7 @@ import com.example.licentapbn.R;
 
 import java.util.List;
 
-public class MemberAdapter extends RecyclerView.Adapter<MemberHolder> {
+public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberHolder> {
 
     Context context;
     List<Member> members;
@@ -35,5 +37,13 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberHolder> {
     @Override
     public int getItemCount() {
         return members.size();
+    }
+    public class MemberHolder extends RecyclerView.ViewHolder {
+        TextView tv1;
+
+        public MemberHolder(@NonNull View itemView) {
+            super(itemView);
+            tv1=itemView.findViewById(R.id.tv_name);
+        }
     }
 }

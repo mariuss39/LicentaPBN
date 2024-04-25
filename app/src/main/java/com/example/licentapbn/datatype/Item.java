@@ -11,9 +11,18 @@ public class Item implements Serializable{
         private boolean free;
         private String memberId;
         private boolean isExpanded;
+        private String imageUrl;
 
         public Item() {
         }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public boolean isExpanded() {
         return isExpanded;
@@ -23,7 +32,7 @@ public class Item implements Serializable{
         isExpanded = expanded;
     }
 
-    public Item(String name, String id, String description, String weight, String size, boolean free, String memberId) {
+    public Item(String name, String id, String description, String weight, String size, boolean free, String memberId,String imageUrl) {
         this.name = name;
         this.id = id;
         this.description = description;
@@ -32,6 +41,7 @@ public class Item implements Serializable{
         this.free = free;
         this.memberId = memberId;
         this.isExpanded=false;
+        this.imageUrl=imageUrl;
     }
 
     public String getName() {

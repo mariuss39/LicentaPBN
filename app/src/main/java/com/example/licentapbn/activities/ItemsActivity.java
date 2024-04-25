@@ -37,14 +37,13 @@ import java.util.List;
 
 public class ItemsActivity extends AppCompatActivity {
     List<Item> items = new ArrayList<>();
+    List<Member> members=new ArrayList<>();
     RecyclerView recyclerView;
     ProgressDialog progressDialog;
     TextView tv3;
-    ConstraintLayout layout;
     ItemAdapter itemAdapter;
+    MemberAdapter memberAdapter;
     FirebaseFirestore firestore;
-    String exapandableceva;
-    boolean visibility;
 
 
     @Override
@@ -64,13 +63,12 @@ public class ItemsActivity extends AppCompatActivity {
         firestore=FirebaseFirestore.getInstance();
         itemAdapter=new ItemAdapter(ItemsActivity.this,items);
         recyclerView.setAdapter(itemAdapter);
-        
-        dataChangdListener();
-
-        Toast.makeText(getApplicationContext(), "S-a bagat inoel in lista", Toast.LENGTH_SHORT).show();
+        memberAdapter=new MemberAdapter(ItemsActivity.this,members);
+        itemsDataChangdListener();
+        membersDataChangdListener();
     }
 
-    private void dataChangdListener() {
+    private void itemsDataChangdListener() {
         firestore.collection("items").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -110,16 +108,46 @@ public class ItemsActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void expandCardView(View view) {
-        TransitionManager.beginDelayedTransition(layout,new AutoTransition());
-        if(tv3.getVisibility()==View.GONE){
-            tv3.setVisibility(View.VISIBLE);
-        }
-        else{
-            tv3.setVisibility(View.GONE);
-        }
-
+    private void membersDataChangdListener() {
+        firestore.collection("members").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    Log.e("firestore errot", error.getMessage());
+                    return;
+                }
+                for (DocumentChange dc : value.getDocumentChanges()) {
+                    if (dc.getType() == DocumentChange.Type.ADDED) {
+                        members.add(dc.getDocument().toObject(Member.class));
+                    } else if (dc.getType() == DocumentChange.Type.MODIFIED) {
+                        Toast.makeText(getApplicationContext(),"proba",Toast.LENGTH_SHORT).show();
+                        String documentId = dc.getDocument().getId();
+                        Member modifiedMember = dc.getDocument().toObject(Member.class);
+                        for (int i = 0; i < members.size(); i++) {
+                            if (members.get(i).getId().equals(documentId)) {
+                                members.set(i, modifiedMember);
+                                break;
+                            }
+                        }
+                    } else if (dc.getType() == DocumentChange.Type.REMOVED) {
+                        String documentId = dc.getDocument().getId();
+                        for (int i = 0; i < members.size(); i++) {
+                            if (members.get(i).getId().equals(documentId)) {
+                                members.remove(i);
+                                break;
+                            }
+                        }
+                    }
+                    memberAdapter.notifyDataSetChanged();
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                }
+            }
+        });
     }
 }
 
