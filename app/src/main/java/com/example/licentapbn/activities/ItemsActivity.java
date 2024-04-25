@@ -40,7 +40,10 @@ public class ItemsActivity extends AppCompatActivity {
     List<Member> members=new ArrayList<>();
     RecyclerView recyclerView;
     ProgressDialog progressDialog;
-    TextView tv3;
+    Button button_filter_available_items;
+    Button button_reset_filter_items;
+    Button button_filter_unavailable_items;
+
     ItemAdapter itemAdapter;
     MemberAdapter memberAdapter;
     FirebaseFirestore firestore;
@@ -50,7 +53,9 @@ public class ItemsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
-
+        button_filter_available_items=findViewById(R.id.button_filter_availabe_items);
+        button_reset_filter_items=findViewById(R.id.button_reset_filter_items);
+        button_filter_unavailable_items=findViewById(R.id.button_filter_unavailable_items);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("fetching data..");
         progressDialog.setCancelable(false);
@@ -66,6 +71,26 @@ public class ItemsActivity extends AppCompatActivity {
         memberAdapter=new MemberAdapter(ItemsActivity.this,members);
         itemsDataChangdListener();
         membersDataChangdListener();
+        button_filter_available_items.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemAdapter.clearFilter();
+                itemAdapter.filterItemsByFree(true);
+            }
+        });
+        button_reset_filter_items.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemAdapter.clearFilter();
+            }
+        });
+        button_filter_unavailable_items.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemAdapter.clearFilter();
+                itemAdapter.filterItemsByFree(false);
+            }
+        });
     }
 
     private void itemsDataChangdListener() {

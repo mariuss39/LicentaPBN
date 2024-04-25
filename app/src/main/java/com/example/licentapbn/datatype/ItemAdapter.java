@@ -27,10 +27,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
 
     Context context;
     List<Item> items;
+    List<Item> itemsCopy;
 
     public ItemAdapter(Context context, List<Item> items) {
         this.context = context;
         this.items = items;
+        this.itemsCopy=items;
     }
 
     @NonNull
@@ -42,8 +44,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
     @Override
     public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
         holder.tv1.setText(items.get(position).getName());
+        holder.invisibleLayout.setVisibility(View.GONE);
+        for(Item item: items){
+            item.setExpanded(false);
+        }
         holder.tvItemWeight.setText("Weight: "+items.get(position).getWeight());
         holder.tvItemSize.setText("Size: "+items.get(position).getSize());
+        if(!items.get(position).getMemberName().equals("Storage")) {
+            holder.tvMemberName.setVisibility(View.VISIBLE);
+        }
+        holder.tvMemberName.setText("Taken by: "+items.get(position).getMemberName());
         if(items.get(position).isFree()){
             holder.tv2.setText("Availabe");
             holder.tv2.setTextColor(Color.GREEN);
@@ -61,18 +71,37 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
                     holder.tv3.setVisibility(View.GONE);
                     holder.tvItemSize.setVisibility(View.GONE);
                     holder.tvItemWeight.setVisibility(View.GONE);
+                    holder.tvMemberName.setVisibility(View.GONE);
                     items.get(position).setExpanded(false);
 
                 } else {
                     holder.invisibleLayout.setVisibility(View.VISIBLE);
                     holder.tv3.setVisibility(View.VISIBLE);
                     holder.tvItemSize.setVisibility(View.VISIBLE);
+                    if(!items.get(position).getMemberName().equals("Storage")) {
+                        holder.tvMemberName.setVisibility(View.VISIBLE);
+                    }
                     holder.tvItemWeight.setVisibility(View.VISIBLE);
                     items.get(position).setExpanded(true);
                 }
             }
         });
 
+    }
+    public void filterItemsByFree(boolean isFree) {
+        List<Item> filteredList = new ArrayList<>();
+        for (Item item : items) {
+            if (item.isFree()==isFree) {
+                filteredList.add(item);
+            }
+        }
+        // Actualizează lista de elemente din adapter cu lista filtrată
+        items = filteredList;
+        notifyDataSetChanged();
+    }
+    public void clearFilter() {
+        items = itemsCopy; // Lista filtrată devine lista completă de elemente
+        notifyDataSetChanged();
     }
 
     @Override
@@ -81,7 +110,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
     }
 
     public static class ItemHolder extends RecyclerView.ViewHolder {
-        TextView tv1,tv2,tv3,tvItemWeight,tvItemSize;
+        TextView tv1,tv2,tv3,tvItemWeight,tvItemSize,tvMemberName;
         ImageView imageView;
         CardView item_cardview;
         ConstraintLayout invisibleLayout;
@@ -93,6 +122,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
             tv3=itemView.findViewById(R.id.tv_details);
             tvItemWeight = itemView.findViewById(R.id.tv_item_weight);
             tvItemSize=itemView.findViewById(R.id.tv_item_size);
+            tvMemberName=itemView.findViewById(R.id.tv_owner_name);
             item_cardview=itemView.findViewById(R.id.item_cardview);
             invisibleLayout=itemView.findViewById(R.id.invisible_constraint_layout);
             imageView=itemView.findViewById(R.id.recyclerImage);

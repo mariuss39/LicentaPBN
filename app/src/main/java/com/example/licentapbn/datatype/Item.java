@@ -10,11 +10,20 @@ public class Item implements Serializable{
         private String size;
         private boolean free;
         private String memberId;
+        private String memberName;
         private boolean isExpanded;
         private String imageUrl;
 
         public Item() {
         }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
+    }
 
     public String getImageUrl() {
         return imageUrl;
@@ -108,8 +117,11 @@ public class Item implements Serializable{
                 ", description='" + description + '\'' +
                 ", weight='" + weight + '\'' +
                 ", size='" + size + '\'' +
-                ", isFree=" + free +
+                ", free=" + free +
                 ", memberId='" + memberId + '\'' +
+                ", memberName='" + memberName + '\'' +
+                ", isExpanded=" + isExpanded +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }

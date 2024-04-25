@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Member implements Serializable {
     private String name;
-    private String prename;
     private String email;
     private String phoneNumber;
     private List<String> itemsId;
@@ -14,9 +13,8 @@ public class Member implements Serializable {
     public Member() {
     }
 
-    public Member(String name, String prename, String email, String phoneNumber, List<String> itemsId, String id) {
+    public Member(String name, String email, String phoneNumber, List<String> itemsId, String id) {
         this.name = name;
-        this.prename = prename;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.itemsId = itemsId;
@@ -30,15 +28,6 @@ public class Member implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getPrename() {
-        return prename;
-    }
-
-    public void setPrename(String prename) {
-        this.prename = prename;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -75,14 +64,12 @@ public class Member implements Serializable {
     public String toString() {
         return "Member{" +
                 "name='" + name + '\'' +
-                ", prename='" + prename + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", itemsId=" + itemsId +
                 ", id='" + id + '\'' +
                 '}';
     }
-
 }
 
 

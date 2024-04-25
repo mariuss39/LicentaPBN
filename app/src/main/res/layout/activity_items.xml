@@ -5,14 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.ItemsActivity">
-
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Available"
+    android:padding="12dp"
+    android:textStyle="bold"
+    android:id="@+id/button_filter_availabe_items"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toStartOf="@id/button_reset_filter_items"></Button>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="All"
+        android:textStyle="bold"
+        android:padding="12dp"
+        android:id="@+id/button_reset_filter_items"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_filter_availabe_items"
+        app:layout_constraintEnd_toStartOf="@id/button_filter_unavailable_items"
+        ></Button>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Unavailable"
+        android:textStyle="bold"
+        android:padding="12dp"
+        android:id="@+id/button_filter_unavailable_items"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_reset_filter_items"></Button>
     <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
     android:id="@+id/recyclerview_items_container"
-    android:layout_height="match_parent"
+    android:layout_height="0dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/button_reset_filter_items" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
