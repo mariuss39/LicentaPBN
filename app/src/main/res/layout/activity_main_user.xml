@@ -239,6 +239,14 @@
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/qr_scanner_cardview_5h_cardview"
+        android:layout_width="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_height="wrap_content"
+        android:id="@+id/button_logout_main_activity"
+        ></Button>
 
 
     <androidx.constraintlayout.widget.Guideline

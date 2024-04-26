@@ -20,6 +20,7 @@ public class MainActivityUser extends AppCompatActivity {
     CardView profileCardview;
     CardView membersCardview;
     CardView itemsCardview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +38,14 @@ public class MainActivityUser extends AppCompatActivity {
                 Intent profileActivityIntent=new Intent(getApplicationContext(),ProfileActivity.class);
                 startActivity(profileActivityIntent);
 
+            }
+        });
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MainActivityUser.this,LoginActivity.class));
+                finish();
             }
         });
         membersCardview.setOnClickListener(new View.OnClickListener() {
@@ -64,5 +73,6 @@ public class MainActivityUser extends AppCompatActivity {
         membersCardview=findViewById(R.id.SearchMembers_cardview_2nd_card);
         itemsCardview=findViewById(R.id.SearchItems_cardview_first_card);
         firebaseUser= firebaseAuth.getCurrentUser();
+        logoutButton=findViewById(R.id.button_logout_main_activity);
     }
 }

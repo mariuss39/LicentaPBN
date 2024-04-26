@@ -3,6 +3,7 @@ package com.example.licentapbn.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -44,9 +45,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import id.zelory.compressor.Compressor;
 import io.grpc.Context;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -66,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        intializeComponents();
+        initializeComponents();
         profileDataChangeListen();
         profileDataInitialize();
         button_logout.setOnClickListener(new View.OnClickListener() {
@@ -92,24 +96,45 @@ public class ProfileActivity extends AppCompatActivity {
         progressDialog.show();
         if(imageUri!=null){
             StorageReference storageReference= FirebaseStorage.getInstance().getReference().child("members_images").child(System.currentTimeMillis()+"."+getFileExtension(imageUri));
-            storageReference.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String url=uri.toString();
-                            Log.e("TAGuri","HELP");
-                            progressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(),"Image uploaded succesfully",Toast.LENGTH_SHORT).show();
-                            DocumentReference documentReference= firestore.collection("members").document(firebaseUser.getUid());
-                            Map<String, Object> updates = new HashMap<>();
-                            updates.put("imageUrl", url);
-                            documentReference.update(updates);
-                        }
-                    });
-                }
+                storageReference.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String url = uri.toString();
+                                Log.e("TAGuri", "HELP");
+                                progressDialog.dismiss();
+                                Toast.makeText(getApplicationContext(), "Image uploaded succesfully", Toast.LENGTH_SHORT).show();
+
+
+                                DocumentReference documentReference = firestore.collection("members").document(firebaseUser.getUid());
+                                documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            String oldImageUrl = snapshot.getString("imageUrl");
+                                            if (!oldImageUrl.equals("")) {
+                                                StorageReference storageReference2 = FirebaseStorage.getInstance().getReferenceFromUrl(oldImageUrl);
+                                                storageReference2.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                    }
+                                                });
+                                            } else {
+                                                Log.e("TAGPHOTO", "E PRIMA POZA");
+                                            }
+                                        }
+                                    }
+                                });
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("imageUrl", url);
+                                documentReference.update(updates);
+                            }
+                        });
+                    }
             });
+
         }
     }
     private void openImage(){
@@ -147,7 +172,13 @@ public class ProfileActivity extends AppCompatActivity {
                             tv_name.setText(name);
                             tv_email.setText(email);
                             tv_phoneNumber.setText(phoneNumber);
+                            if(!documentSnapshot.getString("imageUrl").equals("")){
                             Glide.with(getApplicationContext()).load(documentSnapshot.getString("imageUrl")).into(imageView_profile_picture);
+                            }
+                            else{
+
+                                Log.e("TAGPHOTO","fail la initializare");
+                            }
                         } else {
                             Log.d("TAG", "Document does not exist");
                         }
@@ -173,12 +204,15 @@ public class ProfileActivity extends AppCompatActivity {
                     Log.e("TAG A3","HELEELELELEP");
                     Member modifiedMember=value.toObject(Member.class);
                     tv_name.setText(modifiedMember.getName());
-                }
+                    if(!modifiedMember.getImageUrl().equals("")) {
+                        Glide.with(getApplicationContext()).load(modifiedMember.getImageUrl()).into(imageView_profile_picture);
+                    }
+                    }
             }
         });
     }
 
-    private void intializeComponents() {
+    private void initializeComponents() {
         button_logout=findViewById(R.id.button_logout);
         imageView_profile_picture=findViewById(R.id.profileImage);
         button_change_profile_picture=findViewById(R.id.button_change_profile_image_profileActivity);
