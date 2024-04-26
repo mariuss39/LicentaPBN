@@ -4,9 +4,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,9 +24,10 @@ import com.bumptech.glide.Glide;
 import com.example.licentapbn.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
 
     Context context;
     List<Item> items;
@@ -31,8 +35,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
 
     public ItemAdapter(Context context, List<Item> items) {
         this.context = context;
-        this.items = items;
         this.itemsCopy=items;
+        this.items =this.itemsCopy;
     }
 
     @NonNull
@@ -108,6 +112,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
     public int getItemCount() {
         return items.size();
     }
+
+
 
     public static class ItemHolder extends RecyclerView.ViewHolder {
         TextView tv1,tv2,tv3,tvItemWeight,tvItemSize,tvMemberName;

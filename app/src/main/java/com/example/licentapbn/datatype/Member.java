@@ -9,16 +9,26 @@ public class Member implements Serializable {
     private String phoneNumber;
     private List<String> itemsId;
     private String id;
+    private String imageUrl;
 
     public Member() {
     }
 
-    public Member(String name, String email, String phoneNumber, List<String> itemsId, String id) {
+    public Member(String name, String email, String phoneNumber, List<String> itemsId, String id, String imageUrl) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.itemsId = itemsId;
         this.id = id;
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {

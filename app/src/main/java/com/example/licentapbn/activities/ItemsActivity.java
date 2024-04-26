@@ -11,11 +11,15 @@ import android.os.Bundle;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.licentapbn.R;
 import com.example.licentapbn.datatype.Item;
@@ -37,13 +41,11 @@ import java.util.List;
 
 public class ItemsActivity extends AppCompatActivity {
     List<Item> items = new ArrayList<>();
-    List<Member> members=new ArrayList<>();
     RecyclerView recyclerView;
     ProgressDialog progressDialog;
     Button button_filter_available_items;
     Button button_reset_filter_items;
     Button button_filter_unavailable_items;
-
     ItemAdapter itemAdapter;
     MemberAdapter memberAdapter;
     FirebaseFirestore firestore;
@@ -53,24 +55,13 @@ public class ItemsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
-        button_filter_available_items=findViewById(R.id.button_filter_availabe_items);
-        button_reset_filter_items=findViewById(R.id.button_reset_filter_items);
-        button_filter_unavailable_items=findViewById(R.id.button_filter_unavailable_items);
-        progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("fetching data..");
-        progressDialog.setCancelable(false);
+        initializeComponents();
+        itemsDataChangdListen();
+        setFilterButtonsOnClickListeners();
 
-        progressDialog.show();
+    }
 
-        recyclerView=findViewById(R.id.recyclerview_items_container);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        firestore=FirebaseFirestore.getInstance();
-        itemAdapter=new ItemAdapter(ItemsActivity.this,items);
-        recyclerView.setAdapter(itemAdapter);
-        memberAdapter=new MemberAdapter(ItemsActivity.this,members);
-        itemsDataChangdListener();
-        membersDataChangdListener();
+    private void setFilterButtonsOnClickListeners() {
         button_filter_available_items.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +84,22 @@ public class ItemsActivity extends AppCompatActivity {
         });
     }
 
-    private void itemsDataChangdListener() {
+    public void initializeComponents(){
+        button_filter_available_items=findViewById(R.id.button_filter_availabe_items);
+        button_reset_filter_items=findViewById(R.id.button_reset_filter_items);
+        button_filter_unavailable_items=findViewById(R.id.button_filter_unavailable_items);
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("fetching data..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        recyclerView=findViewById(R.id.recyclerview_items_container);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        firestore=FirebaseFirestore.getInstance();
+        itemAdapter=new ItemAdapter(ItemsActivity.this,items);
+        recyclerView.setAdapter(itemAdapter);
+    }
+    private void itemsDataChangdListen() {
         firestore.collection("items").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -126,47 +132,6 @@ public class ItemsActivity extends AppCompatActivity {
                         }
                     }
                     itemAdapter.notifyDataSetChanged();
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                }
-            }
-        });
-    }
-    private void membersDataChangdListener() {
-        firestore.collection("members").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                    Log.e("firestore errot", error.getMessage());
-                    return;
-                }
-                for (DocumentChange dc : value.getDocumentChanges()) {
-                    if (dc.getType() == DocumentChange.Type.ADDED) {
-                        members.add(dc.getDocument().toObject(Member.class));
-                    } else if (dc.getType() == DocumentChange.Type.MODIFIED) {
-                        Toast.makeText(getApplicationContext(),"proba",Toast.LENGTH_SHORT).show();
-                        String documentId = dc.getDocument().getId();
-                        Member modifiedMember = dc.getDocument().toObject(Member.class);
-                        for (int i = 0; i < members.size(); i++) {
-                            if (members.get(i).getId().equals(documentId)) {
-                                members.set(i, modifiedMember);
-                                break;
-                            }
-                        }
-                    } else if (dc.getType() == DocumentChange.Type.REMOVED) {
-                        String documentId = dc.getDocument().getId();
-                        for (int i = 0; i < members.size(); i++) {
-                            if (members.get(i).getId().equals(documentId)) {
-                                members.remove(i);
-                                break;
-                            }
-                        }
-                    }
-                    memberAdapter.notifyDataSetChanged();
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }

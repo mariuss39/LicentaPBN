@@ -5,63 +5,65 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.ProfileActivity">
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="120sp"
+        android:layout_height="120sp"
+        android:src="@drawable/person_pin_icon_profile_picture_holder"
+        android:scaleType="fitCenter"
+        android:layout_margin="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/button_change_profile_image_profileActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change Picture"
+            android:textSize="10sp"
+            app:layout_constraintTop_toBottomOf="@id/profileImage"
+            app:layout_constraintStart_toStartOf="@id/profileImage"
+            app:layout_constraintEnd_toEndOf="@id/profileImage"
+            ></Button>
     <TextView
-        android:id="@+id/tv1"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_name_profileActivity"
+        android:layout_width="0dp"
+        android:textAlignment="center"
         android:layout_height="wrap_content"
-        android:text="ceva"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="Member Name"
+        app:layout_constraintTop_toTopOf="@id/profileImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></TextView>
+        app:layout_constraintBottom_toTopOf="@id/tv_email_profileActivity"
+        app:layout_constraintStart_toEndOf="@id/profileImage"></TextView>
     <TextView
-        android:id="@+id/tv2"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_email_profileActivity"
+        android:layout_width="0dp"
+        android:textAlignment="center"
         android:layout_height="wrap_content"
-        android:text="ceva"
-        app:layout_constraintTop_toBottomOf="@id/tv1"
+        android:text="Email"
+        app:layout_constraintTop_toBottomOf="@id/tv_name_profileActivity"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></TextView>
+        app:layout_constraintBottom_toTopOf="@id/tv_phoneNumber_profileActivity"
+        app:layout_constraintStart_toEndOf="@id/profileImage"></TextView>
     <TextView
-        android:id="@+id/tv3"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_phoneNumber_profileActivity"
+        android:layout_width="0dp"
+        android:textAlignment="center"
         android:layout_height="wrap_content"
-        android:text="ceva"
-        app:layout_constraintTop_toBottomOf="@id/tv2"
+        android:text="Phone Number"
+        app:layout_constraintTop_toBottomOf="@id/tv_email_profileActivity"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></TextView>
-    <TextView
-        android:id="@+id/tv4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ceva"
-        app:layout_constraintTop_toBottomOf="@id/tv3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></TextView>
-    <TextView
-        android:id="@+id/tv5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ceva"
-        app:layout_constraintTop_toBottomOf="@id/tv4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></TextView>
-    <TextView
-        android:id="@+id/tv6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ceva"
-        app:layout_constraintTop_toBottomOf="@id/tv5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></TextView>
-
+        app:layout_constraintBottom_toBottomOf="@id/profileImage"
+        app:layout_constraintStart_toEndOf="@id/profileImage"></TextView>
     <Button
         android:clickable="true"
+        android:text="LOG OUT"
+        android:textStyle="bold"
         android:id="@+id/button_logout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv6"></Button>
+        app:layout_constraintBottom_toBottomOf="parent"></Button>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
