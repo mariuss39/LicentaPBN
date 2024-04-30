@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -21,6 +23,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.licentapbn.R;
 import com.example.licentapbn.datatype.Item;
+import com.example.licentapbn.datatype.ItemAdapter;
+import com.example.licentapbn.datatype.ItemAdapterProfileActivity;
 import com.example.licentapbn.datatype.Member;
 import com.example.licentapbn.firebase.FirebaseSingleton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,7 +51,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import id.zelory.compressor.Compressor;
@@ -57,12 +63,17 @@ public class ProfileActivity extends AppCompatActivity {
 
     Button button_logout;
     Button button_change_profile_picture;
+    List<Item> items=new ArrayList<>();
     FirebaseFirestore firestore;
     FirebaseUser firebaseUser;
+    ItemAdapterProfileActivity itemAdapterProfileActivity;
+    ProgressDialog progressDialog;
     TextView tv_name;
     ImageView imageView_profile_picture;
     TextView tv_email;
+    RecyclerView recyclerView;
     Uri imageUri;
+    TextView tvItemsOwned;
     TextView tv_phoneNumber;
     static final int IMAGE_REQUEST=2;
 
@@ -71,8 +82,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         initializeComponents();
-        profileDataChangeListen();
         profileDataInitialize();
+        profileDataChangeListen();
+        itemsDataChangdListen();
         button_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,12 +184,11 @@ public class ProfileActivity extends AppCompatActivity {
                             tv_name.setText(name);
                             tv_email.setText(email);
                             tv_phoneNumber.setText(phoneNumber);
-                            if(!documentSnapshot.getString("imageUrl").equals("")){
-                            Glide.with(getApplicationContext()).load(documentSnapshot.getString("imageUrl")).into(imageView_profile_picture);
+                            if(documentSnapshot.getString("imageUrl").equals("")){
+                                Log.e("TAGPHOTO","fail la initializare");
                             }
                             else{
-
-                                Log.e("TAGPHOTO","fail la initializare");
+                                Glide.with(getApplicationContext()).load(documentSnapshot.getString("imageUrl")).into(imageView_profile_picture);
                             }
                         } else {
                             Log.d("TAG", "Document does not exist");
@@ -203,11 +214,13 @@ public class ProfileActivity extends AppCompatActivity {
                 if (value != null){
                     Log.e("TAG A3","HELEELELELEP");
                     Member modifiedMember=value.toObject(Member.class);
-                    tv_name.setText(modifiedMember.getName());
-                    if(!modifiedMember.getImageUrl().equals("")) {
-                        Glide.with(getApplicationContext()).load(modifiedMember.getImageUrl()).into(imageView_profile_picture);
+                    if (modifiedMember != null) {
+                        tv_name.setText(modifiedMember.getName());
+                        if (!modifiedMember.getImageUrl().equals("")) {
+                            Glide.with(getApplicationContext()).load(modifiedMember.getImageUrl()).into(imageView_profile_picture);
+                        }
                     }
-                    }
+                }
             }
         });
     }
@@ -221,5 +234,58 @@ public class ProfileActivity extends AppCompatActivity {
         tv_name=findViewById(R.id.tv_name_profileActivity);
         tv_email=findViewById(R.id.tv_email_profileActivity);
         tv_phoneNumber=findViewById(R.id.tv_phoneNumber_profileActivity);
+        tvItemsOwned=findViewById(R.id.tv_items_owned);
+        //recycler items
+        recyclerView=findViewById(R.id.recyclerview_items_ProfileActivity);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        itemAdapterProfileActivity=new ItemAdapterProfileActivity(ProfileActivity.this,items);
+        recyclerView.setAdapter(itemAdapterProfileActivity);
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("fetching data..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+    private void itemsDataChangdListen() {
+        firestore.collection("items").whereEqualTo("memberId",firebaseUser.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    return;
+                }
+                if (value != null) {
+                    for (DocumentChange dc : value.getDocumentChanges()) {
+                        if (dc.getType() == DocumentChange.Type.ADDED) {
+                            items.add(dc.getDocument().toObject(Item.class));
+                        } else if (dc.getType() == DocumentChange.Type.MODIFIED) {
+                            String documentId = dc.getDocument().getId();
+                            Item modifiedItem = dc.getDocument().toObject(Item.class);
+                            for (int i = 0; i < items.size(); i++) {
+                                if (items.get(i).getId().equals(documentId)) {
+                                    items.set(i, modifiedItem);
+                                    break;
+                                }
+                            }
+                        } else if (dc.getType() == DocumentChange.Type.REMOVED) {
+                            String documentId = dc.getDocument().getId();
+                            for (int i = 0; i < items.size(); i++) {
+                                if (items.get(i).getId().equals(documentId)) {
+                                    items.remove(i);
+                                    break;
+                                }
+                            }
+                        }
+                        itemAdapterProfileActivity.notifyDataSetChanged();
+                        tvItemsOwned.setText("Items in your possesion: "+items.size());
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                    }
+                }
+            }
+        });
     }
 }

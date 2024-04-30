@@ -47,7 +47,6 @@ public class ItemsActivity extends AppCompatActivity {
     Button button_reset_filter_items;
     Button button_filter_unavailable_items;
     ItemAdapter itemAdapter;
-    MemberAdapter memberAdapter;
     FirebaseFirestore firestore;
 
 
