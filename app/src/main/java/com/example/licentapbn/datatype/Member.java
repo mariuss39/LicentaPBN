@@ -10,8 +10,26 @@ public class Member implements Serializable {
     private List<String> itemsId;
     private String id;
     private String imageUrl;
+    private List<Item> itemsOwned;
+    private boolean isExpanded;
 
     public Member() {
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
+    }
+
+    public List<Item> getItemsOwned() {
+        return itemsOwned;
+    }
+
+    public void setItemsOwned(List<Item> itemsOwned) {
+        this.itemsOwned = itemsOwned;
     }
 
     public Member(String name, String email, String phoneNumber, List<String> itemsId, String id, String imageUrl) {
@@ -21,6 +39,13 @@ public class Member implements Serializable {
         this.itemsId = itemsId;
         this.id = id;
         this.imageUrl = imageUrl;
+    }
+
+    public Member(String name, String phoneNumber, String imageUrl, List<Item> itemsOwned) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.imageUrl = imageUrl;
+        this.itemsOwned = itemsOwned;
     }
 
     public String getImageUrl() {

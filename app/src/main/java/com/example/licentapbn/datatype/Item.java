@@ -41,7 +41,12 @@ public class Item implements Serializable{
         isExpanded = expanded;
     }
 
-    public Item(String name, String id, String description, String weight, String size, boolean free, String memberId,String imageUrl) {
+    public Item(String name, String imageUrl) {
+        this.name = name;
+        this.imageUrl = imageUrl;
+    }
+
+    public Item(String name, String id, String description, String weight, String size, boolean free, String memberId, String imageUrl) {
         this.name = name;
         this.id = id;
         this.description = description;

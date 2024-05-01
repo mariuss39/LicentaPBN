@@ -49,15 +49,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
     public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
         holder.tv1.setText(items.get(position).getName());
         holder.invisibleLayout.setVisibility(View.GONE);
+        holder.tvItemWeight.setText("Weight: "+items.get(position).getWeight());
+        holder.tvItemSize.setText("Size: "+items.get(position).getSize());
+        holder.tvMemberName.setText("Taken by: "+items.get(position).getMemberName());
+        holder.tv3.setText(items.get(position).getDescription());
         for(Item item: items){
             item.setExpanded(false);
         }
-        holder.tvItemWeight.setText("Weight: "+items.get(position).getWeight());
-        holder.tvItemSize.setText("Size: "+items.get(position).getSize());
         if(!items.get(position).getMemberName().equals("Storage")) {
             holder.tvMemberName.setVisibility(View.VISIBLE);
         }
-        holder.tvMemberName.setText("Taken by: "+items.get(position).getMemberName());
+
         if(items.get(position).isFree()){
             holder.tv2.setText("Availabe");
             holder.tv2.setTextColor(Color.GREEN);
@@ -65,7 +67,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
             holder.tv2.setTextColor(Color.RED);
             holder.tv2.setText("Unavailabe");
         }
-        holder.tv3.setText(items.get(position).getDescription());
+
         Glide.with(context).load(items.get(position).getImageUrl()).into(holder.imageView);
         holder.item_cardview.setOnClickListener(new View.OnClickListener() {
             @Override

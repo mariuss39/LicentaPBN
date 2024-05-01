@@ -26,7 +26,6 @@ import com.example.licentapbn.datatype.Item;
 import com.example.licentapbn.datatype.ItemAdapter;
 import com.example.licentapbn.datatype.ItemAdapterProfileActivity;
 import com.example.licentapbn.datatype.Member;
-import com.example.licentapbn.firebase.FirebaseSingleton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
