@@ -106,6 +106,7 @@ public class ItemsActivity extends AppCompatActivity {
                     Log.e("firestore errot", error.getMessage());
                     return;
                 }
+                if(value!=null){
                 for (DocumentChange dc : value.getDocumentChanges()) {
                     if (dc.getType() == DocumentChange.Type.ADDED) {
                         items.add(dc.getDocument().toObject(Item.class));
@@ -127,10 +128,11 @@ public class ItemsActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    itemAdapter.notifyDataSetChanged();
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
+                }
+                }
+                itemAdapter.notifyDataSetChanged();
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
                 }
             }
         });

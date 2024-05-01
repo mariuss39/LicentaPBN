@@ -277,12 +277,12 @@ public class ProfileActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        itemAdapterProfileActivity.notifyDataSetChanged();
-                        tvItemsOwned.setText("Items in your possesion: "+items.size());
-                        if (progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
                     }
+                }
+                itemAdapterProfileActivity.notifyDataSetChanged();
+                tvItemsOwned.setText("Items in your possesion: "+items.size());
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
                 }
             }
         });

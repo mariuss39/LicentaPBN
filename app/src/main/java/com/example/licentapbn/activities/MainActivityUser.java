@@ -19,6 +19,7 @@ public class MainActivityUser extends AppCompatActivity {
     Button logoutButton;
     CardView profileCardview;
     CardView membersCardview;
+    CardView qrScannerCardview;
     CardView itemsCardview;
 
     @Override
@@ -66,6 +67,15 @@ public class MainActivityUser extends AppCompatActivity {
 
             }
         });
+        qrScannerCardview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getApplicationContext(),"ceva",Toast.LENGTH_SHORT).show();
+                Intent qrScannerActivityIntent=new Intent(getApplicationContext(), ScanQRActivity.class);
+                startActivity(qrScannerActivityIntent);
+
+            }
+        });
     }
     void initializeComponents(){
         firebaseAuth=FirebaseAuth.getInstance();
@@ -74,5 +84,6 @@ public class MainActivityUser extends AppCompatActivity {
         itemsCardview=findViewById(R.id.SearchItems_cardview_first_card);
         firebaseUser= firebaseAuth.getCurrentUser();
         logoutButton=findViewById(R.id.button_logout_main_activity);
+        qrScannerCardview=findViewById(R.id.qr_scanner_cardview_5h_cardview);
     }
 }
