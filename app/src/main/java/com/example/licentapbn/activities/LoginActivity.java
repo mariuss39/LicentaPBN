@@ -1,13 +1,12 @@
 package com.example.licentapbn.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -15,14 +14,10 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.licentapbn.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -46,91 +41,80 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initializeComponents();
-        tiet_username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    String username = tiet_username.getText().toString();
-                    if (!isValidUsername(username)) {
-                        tiet_username.setError("Invalid email format");
-                    } else {
-                        tiet_username.setError(null);
-                    }
+        tiet_username.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String username = String.valueOf(tiet_username.getText());
+                if (!isValidUsername(username)) {
+                    tiet_username.setError(getString(R.string.invalid_email_format));
+                } else {
+                    tiet_username.setError(null);
                 }
             }
         });
-        tiet_password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    String password = tiet_password.getText().toString();
-                    if (password.length() < 6) {
-                        tiet_password.setError("Password must be atleast 6 characthers");
-                    } else {
-                        tiet_password.setError(null);
-                    }
+        tiet_password.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String password = String.valueOf(tiet_password.getText());
+                if (password.length() < 6) {
+                    tiet_password.setError(getString(R.string.password_must_be_at_least_6_characters));
+                } else {
+                    tiet_password.setError(null);
                 }
             }
         });
 
-        tiet_password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    button_login.performClick();
-                    return true;
-                }
-                return false;
+        tiet_password.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                button_login.performClick();
+                return true;
             }
+            return false;
         });
 
-        button_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                String username,password;
-                username=String.valueOf(tiet_username.getText());
-                password=String.valueOf(tiet_password.getText());
-                if(TextUtils.isEmpty(username)){
-                    Toast.makeText(getApplicationContext(),"Email can't be null",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(TextUtils.isEmpty(password)){
-                    Toast.makeText(getApplicationContext(),"Password can't be null",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                firebaseAuth.signInWithEmailAndPassword(username, password)
-                        .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                    progressBar.setVisibility(View.GONE);
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(),"Welcome!",Toast.LENGTH_SHORT).show();
-                                    Intent loginSuccessfulIntent=new Intent(getApplicationContext(),MainActivityUser.class);
-                                    startActivity(loginSuccessfulIntent);
-                                    finish();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+        button_login.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
+            String username,password;
+            username=String.valueOf(tiet_username.getText());
+            password=String.valueOf(tiet_password.getText());
+            if(TextUtils.isEmpty(username)){
+                Toast.makeText(getApplicationContext(), R.string.email_can_t_be_null,Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                return;
             }
+            if(TextUtils.isEmpty(password)){
+                Toast.makeText(getApplicationContext(), R.string.password_can_t_be_null,Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                return;
+            }
+            firebaseAuth.signInWithEmailAndPassword(username, password)
+                    .addOnCompleteListener(task -> {
+                            progressBar.setVisibility(View.GONE);
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(),R.string.welcome,Toast.LENGTH_SHORT).show();
+                            Intent loginSuccessfulIntent=new Intent(getApplicationContext(),MainActivityUser.class);
+                            startActivity(loginSuccessfulIntent);
+                            finish();
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), R.string.authentication_failed,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
 
     }
 
     private boolean isValidUsername(String username) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(tiet_username.getText()).matches();
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(username).matches();
     }
 
     void initializeComponents(){
+        getSupportActionBar().hide();
+        getWindow().setNavigationBarColor(Color.BLACK);
         firebaseAuth=FirebaseAuth.getInstance();
         CardView cardView = findViewById(R.id.card_view_login_form_login);
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.login_cardview_slideup_login);

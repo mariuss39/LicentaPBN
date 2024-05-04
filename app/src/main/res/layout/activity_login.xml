@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/green_speakers_background_loginactivity"
+    android:background="@drawable/caseta_login_background"
     tools:context=".activities.LoginActivity">
 
     <androidx.constraintlayout.widget.Guideline
@@ -30,10 +30,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="24dp"
+            android:paddingStart="24dp"
             android:paddingTop="12dp"
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
@@ -42,40 +41,49 @@
                 android:id="@+id/login_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Log in"
+                android:text="@string/welcome_login"
+                android:fontFamily="@font/poetsenone_regular"
                 android:textAlignment="center"
-                android:textColor="@color/green_dark"
+                android:textColor="@color/red_bright"
                 android:textSize="32sp"
-                android:textStyle="bold"></TextView>
+                android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_username_login"
+                android:textColorHint="@drawable/login_tiet_hint_selector"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="@color/grey_hint"
+                app:boxStrokeWidthFocused="0dp"
                 android:layout_marginTop="24dp"
+                android:hint="@string/email"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_username_login"
                     android:layout_width="match_parent"
-                    app:layout_constraintHeight_default="wrap"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="14sp"
                     android:background="@drawable/rectangle_login"
-                    android:drawableLeft="@drawable/person_symbol_login"
-                    android:drawablePadding="8dp"
-                    android:hint="Email"
+                    android:drawableStart="@drawable/person_symbol_login"
+                    android:padding="22dp"
+                    android:drawablePadding="16dp"
                     android:inputType="textEmailAddress"
-                    android:paddingLeft="12dp"
                     android:textColor="@color/black"
-                    android:textColorHighlight="@color/green_pastel"
-                    android:textColorHint="@color/grey" />
+                     />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_password_login"
+                android:textColorHint="@drawable/login_tiet_hint_selector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="@color/grey_hint"
+                app:boxStrokeWidthFocused="0dp"
+                android:hint="@string/password"
                 android:layout_marginTop="24dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -83,13 +91,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_login"
-                    android:drawableLeft="@drawable/lock_login"
-                    android:drawablePadding="8dp"
-                    android:hint="Password"
-                    android:inputType="textPassword"
-                    android:paddingLeft="12dp"
+                    android:drawableStart="@drawable/lock_login"
+                    android:drawablePadding="16dp"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/grey"
+                    android:padding="22dp"
+                    android:textSize="14sp"
+                    android:inputType="textPassword"
                     android:textIsSelectable="false" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -99,13 +106,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:backgroundTint="@color/green_pastel"
+                android:backgroundTint="@color/black_red"
+                android:focusable="true"
                 android:clickable="true"
-                android:text="Log in"
-                android:textColor="@color/black_greyish"
-                android:textSize="18sp"
+                android:text="@string/log_in"
+                android:textColor="@color/red_bright"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                app:cornerRadius="30dp"></Button>
+                android:fontFamily="@font/poetsenone_regular"
+                app:cornerRadius="20dp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -124,5 +133,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline_orizonal_45_loginActivity"
-        android:elevation="25dp"></ProgressBar>
+        android:elevation="25dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

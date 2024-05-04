@@ -3,7 +3,6 @@ package com.example.licentapbn.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,7 +11,6 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -21,9 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.licentapbn.R;
 import com.example.licentapbn.datatype.Item;
-import com.example.licentapbn.datatype.ItemAdapter;
 import com.example.licentapbn.datatype.ItemAdapterProfileActivity;
 import com.example.licentapbn.datatype.Member;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,11 +30,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,15 +41,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import id.zelory.compressor.Compressor;
-import io.grpc.Context;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -103,10 +92,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
     private void uploadImage(){
         final ProgressDialog progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("Uploading image..");
+        progressDialog.setMessage(getString(R.string.uploading_image));
         progressDialog.show();
         if(imageUri!=null){
-            StorageReference storageReference= FirebaseStorage.getInstance().getReference().child("members_images").child(System.currentTimeMillis()+"."+getFileExtension(imageUri));
+            StorageReference storageReference= FirebaseStorage.getInstance().getReference().child(getString(R.string.members_images)).
+                    child(System.currentTimeMillis()+"."+getFileExtension(imageUri));
                 storageReference.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -114,18 +104,17 @@ public class ProfileActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Uri uri) {
                                 String url = uri.toString();
-                                Log.e("TAGuri", "HELP");
                                 progressDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Image uploaded succesfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), R.string.image_uploaded_successfully, Toast.LENGTH_SHORT).show();
 
 
-                                DocumentReference documentReference = firestore.collection("members").document(firebaseUser.getUid());
+                                DocumentReference documentReference = firestore.collection(getString(R.string.members)).document(firebaseUser.getUid());
                                 documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot snapshot) {
                                         if (snapshot.exists()) {
-                                            String oldImageUrl = snapshot.getString("imageUrl");
-                                            if (!oldImageUrl.equals("")) {
+                                            String oldImageUrl = snapshot.getString(getString(R.string.imageurl));
+                                            if (!oldImageUrl.isEmpty()) {
                                                 StorageReference storageReference2 = FirebaseStorage.getInstance().getReferenceFromUrl(oldImageUrl);
                                                 storageReference2.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
@@ -133,13 +122,12 @@ public class ProfileActivity extends AppCompatActivity {
                                                     }
                                                 });
                                             } else {
-                                                Log.e("TAGPHOTO", "E PRIMA POZA");
                                             }
                                         }
                                     }
                                 });
                                 Map<String, Object> updates = new HashMap<>();
-                                updates.put("imageUrl", url);
+                                updates.put(getString(R.string.imageurl), url);
                                 documentReference.update(updates);
                             }
                         });
@@ -150,7 +138,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
     private void openImage(){
         Intent photoSelectIntent=new Intent();
-        photoSelectIntent.setType("image/*");
+        photoSelectIntent.setType(getString(R.string.image));
         photoSelectIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(photoSelectIntent,IMAGE_REQUEST);
     }
@@ -171,52 +159,47 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void profileDataInitialize() {
-        firestore.collection("members").document(firebaseUser.getUid())
+        firestore.collection(getString(R.string.members)).document(firebaseUser.getUid())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
-                            String name = documentSnapshot.getString("name");
-                            String email = documentSnapshot.getString("email");
-                            String phoneNumber=documentSnapshot.getString("phoneNumber");
+                            String name = documentSnapshot.getString(getString(R.string.name));
+                            String email = documentSnapshot.getString(getString(R.string.email_profile));
+                            String phoneNumber=documentSnapshot.getString(getString(R.string.phonenumber));
                             tv_name.setText(name);
                             tv_email.setText(email);
                             tv_phoneNumber.setText(phoneNumber);
-                            if(documentSnapshot.getString("imageUrl").equals("")){
-                                Log.e("TAGPHOTO","fail la initializare");
+                            if(documentSnapshot.getString(getString(R.string.imageurl)).equals("")){
                             }
                             else{
-                                Glide.with(getApplicationContext()).load(documentSnapshot.getString("imageUrl")).into(imageView_profile_picture);
+                                Glide.with(getApplicationContext()).load(documentSnapshot.getString(getString(R.string.imageurl))).apply(new RequestOptions().centerCrop()).into(imageView_profile_picture);
                             }
                         } else {
-                            Log.d("TAG", "Document does not exist");
                         }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Error getting document", e);
                     }
                 });
     }
 
     private void profileDataChangeListen() {
-        firestore.collection("members").document(firebaseUser.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        firestore.collection(getString(R.string.members)).document(firebaseUser.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
-                    System.err.println("A apărut o eroare: " + error);
                     return;
                 }
                 if (value != null){
-                    Log.e("TAG A3","HELEELELELEP");
                     Member modifiedMember=value.toObject(Member.class);
                     if (modifiedMember != null) {
                         tv_name.setText(modifiedMember.getName());
                         if (!modifiedMember.getImageUrl().equals("")) {
-                            Glide.with(getApplicationContext()).load(modifiedMember.getImageUrl()).into(imageView_profile_picture);
+                            Glide.with(getApplicationContext()).load(modifiedMember.getImageUrl()).apply(new RequestOptions().centerCrop()).into(imageView_profile_picture);
                         }
                     }
                 }
@@ -225,6 +208,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void initializeComponents() {
+        getSupportActionBar().setTitle(R.string.profile);
         button_logout=findViewById(R.id.button_logout);
         imageView_profile_picture=findViewById(R.id.profileImage);
         button_change_profile_picture=findViewById(R.id.button_change_profile_image_profileActivity);
@@ -234,19 +218,19 @@ public class ProfileActivity extends AppCompatActivity {
         tv_email=findViewById(R.id.tv_email_profileActivity);
         tv_phoneNumber=findViewById(R.id.tv_phoneNumber_profileActivity);
         tvItemsOwned=findViewById(R.id.tv_items_owned);
-        //recycler items
         recyclerView=findViewById(R.id.recyclerview_items_ProfileActivity);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         itemAdapterProfileActivity=new ItemAdapterProfileActivity(ProfileActivity.this,items);
         recyclerView.setAdapter(itemAdapterProfileActivity);
         progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("fetching data..");
+        progressDialog.setMessage("Fetching data..");
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
     private void itemsDataChangdListen() {
-        firestore.collection("items").whereEqualTo("memberId",firebaseUser.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firestore.collection(getString(R.string.items)).whereEqualTo(getString(R.string.memberid),firebaseUser.getUid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -280,7 +264,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 }
                 itemAdapterProfileActivity.notifyDataSetChanged();
-                tvItemsOwned.setText("Items in your possesion: "+items.size());
+                tvItemsOwned.setText(getString(R.string.items_in_your_possession)+items.size());
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }

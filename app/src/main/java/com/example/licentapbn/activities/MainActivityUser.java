@@ -16,10 +16,11 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivityUser extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
-    Button logoutButton;
+
     CardView profileCardview;
     CardView membersCardview;
     CardView qrScannerCardview;
+    CardView manualScanCardView;
     CardView itemsCardview;
 
     @Override
@@ -41,14 +42,7 @@ public class MainActivityUser extends AppCompatActivity {
 
             }
         });
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MainActivityUser.this,LoginActivity.class));
-                finish();
-            }
-        });
+
         membersCardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,14 +70,23 @@ public class MainActivityUser extends AppCompatActivity {
 
             }
         });
+        manualScanCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getApplicationContext(),"ceva",Toast.LENGTH_SHORT).show();
+                Intent manualScanActivityIntent=new Intent(getApplicationContext(), ManualScanActivity.class);
+                startActivity(manualScanActivityIntent);
+            }
+        });
     }
     void initializeComponents(){
+        getSupportActionBar().setTitle(R.string.dashboard);
         firebaseAuth=FirebaseAuth.getInstance();
         profileCardview=findViewById(R.id.profile_cardview_4th_cardview);
         membersCardview=findViewById(R.id.SearchMembers_cardview_2nd_card);
         itemsCardview=findViewById(R.id.SearchItems_cardview_first_card);
+        manualScanCardView=findViewById(R.id.manual_search_cardview_3rd_carview);
         firebaseUser= firebaseAuth.getCurrentUser();
-        logoutButton=findViewById(R.id.button_logout_main_activity);
         qrScannerCardview=findViewById(R.id.qr_scanner_cardview_5h_cardview);
     }
 }

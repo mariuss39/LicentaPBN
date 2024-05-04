@@ -11,9 +11,13 @@
     <color name="blue_navy">#1b4552</color>
     <color name="grey_blueish">#8ba0a4</color>
     <color name="grey">#eaeaea</color>
+    <color name="turqoise">#00FFD4</color>
+    <color name="turqoise_dark">#1de2cb</color>
+    <color name="black_red">#220100</color>
     <color name="blue_basic">#194a7a</color>
-    <color name="red_bright">#e12729</color>
+    <color name="red_bright">#ff002b</color>
     <color name="red_wine">#560809</color>
     <color name="red_wine_light">#700e0f</color>
+    <color name="grey_hint">#A6A6A6</color>
 
 </resources>

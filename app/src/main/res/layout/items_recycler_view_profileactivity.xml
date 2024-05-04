@@ -26,6 +26,7 @@
                 android:layout_marginRight="8dp"
                 />
             <TextView
+                android:textColor="@color/black"
                 android:id="@+id/tv_name_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -44,6 +45,7 @@
                     android:text="Item Weight"
                     android:textColor="#333333"
                     android:layout_marginTop="20dp"
+                    android:textSize="12sp"
                     app:layout_constraintTop_toBottomOf="@id/tv_name_item"
                     app:layout_constraintStart_toEndOf="@id/recyclerImage"
                     />
@@ -52,6 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Item Size"
+                    android:textSize="12sp"
                     android:textColor="#333333"
                     android:layout_marginTop="20dp"
                     app:layout_constraintTop_toBottomOf="@id/tv_name_item"
