@@ -36,7 +36,6 @@ import java.util.List;
 public class MembersActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     FirebaseUser firebaseUser;
-    List<Member> members = new ArrayList<>();
     List<Item> items=new ArrayList<>();
     MemberAdapter memberAdapter;
     FirebaseFirestore firestore;
@@ -49,24 +48,21 @@ public class MembersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_members);
         initializeComponents();
-//  itemsDataChangdListen();
-//        membersDataChangeListen();
         membersWithItemsDataChangedListen();
     }
     private void initializeComponents(){
+        getSupportActionBar().setTitle("Search members");
         recyclerView=findViewById(R.id.recycle_view_members);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("fetching data..");
+        progressDialog.setMessage(getString(R.string.fetching_data));
         progressDialog.setCancelable(false);
         progressDialog.show();
         firestore= FirebaseFirestore.getInstance();
         memberAdapter=new MemberAdapter(MembersActivity.this,membersWithItems,items);
         recyclerView.setAdapter(memberAdapter);
         firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
-
-//        membersDataChangeListen();
 
 
     }
@@ -78,50 +74,37 @@ public class MembersActivity extends AppCompatActivity {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Log.e("TAG", "Error getting members collection: ", error);
-                    Log.e("TAAG1","HELP");
                     return;
 
                 }
-                membersWithItems.clear(); // Curățați lista pentru a evita duplicarea datelor
+                membersWithItems.clear();
 
                 for (QueryDocumentSnapshot memberDocument : membersResult) {
 
                     String memberPhoneNumber =(String) memberDocument.get("phoneNumber");
                     String memberName = (String) memberDocument.get("name");
                     String memberImageURl= (String) memberDocument.get("imageUrl");
-                    Log.e("TAAG2","HELP");
 
-                    // Obțineți articolele asociate cu acest membru
                     firestore.collection("items")
                             .whereEqualTo("memberId", memberDocument.getId())
                             .get()
                             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                 @Override
                                 public void onSuccess(QuerySnapshot itemsResult) {
-                                    Log.e("TAAG3","HELP");
-
                                     List<Item> itemsAux = new ArrayList<>();
                                     for (QueryDocumentSnapshot itemDocument : itemsResult) {
                                         String itemName = (String) itemDocument.get("name");
                                         String imageUrl= (String) itemDocument.get("imageUrl");
                                         Item item = new Item( itemName, imageUrl);
                                         itemsAux.add(item);
-                                        Log.e("TAAG4","HELP");
-
                                     }
-                                    Log.e("TAAG5","HELP");
-
-                                    // Adăugați informațiile despre membru și articole în listă
                                     MemberWithItems memberWithItems = new MemberWithItems(memberName, memberPhoneNumber, itemsAux,memberImageURl);
                                     membersWithItems.add(memberWithItems);
                                     memberAdapter.notifyDataSetChanged();
                                     if (progressDialog.isShowing()) {
                                         progressDialog.dismiss();
                                     }
-                                    Log.e("TAAG6","HELP");
 
-                                    // Actualizați RecyclerView-ul sau adapterul aici
                                 }
                             });
                 }

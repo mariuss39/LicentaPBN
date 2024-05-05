@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LicentaPBN</string>
+    <string name="app_name">TwoYou Team</string>
     <string name="invalid_email_format">Invalid email format</string>
     <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters</string>
     <string name="welcome">Welcome!</string>
@@ -38,4 +38,8 @@
     <string name="manual_scan">Manual Scan</string>
     <string name="profile_main">Profile</string>
     <string name="scan_qr">Scan QR</string>
+    <string name="storage">Storage</string>
+    <string name="permission_needed_for_camera_access_allow_permission_in_your_device_s_settings">Permission needed for camera access. Allow permission in your device\'s settings.</string>
+    <string name="invalid_scan_try_again">Invalid scan. Try again!</string>
+    <string name="fetching_data">Fetching data...</string>
 </resources>

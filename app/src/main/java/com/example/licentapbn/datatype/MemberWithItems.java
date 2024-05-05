@@ -24,6 +24,12 @@ public class MemberWithItems {
         this.imageUrl = imageUrl;
     }
 
+    public MemberWithItems(String name, String phoneNumber, List<Item> itemsOwned) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.itemsOwned = itemsOwned;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }

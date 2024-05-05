@@ -27,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
     Button button_login;
     FirebaseAuth firebaseAuth;
     ProgressBar progressBar;
-
     @Override
     public void onStart() {
         super.onStart();

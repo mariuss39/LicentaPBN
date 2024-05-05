@@ -2,36 +2,22 @@ package com.example.licentapbn.activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.SearchView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
-
 import com.example.licentapbn.R;
 import com.example.licentapbn.datatype.Item;
 import com.example.licentapbn.datatype.ItemAdapter;
-import com.example.licentapbn.datatype.Member;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.DocumentType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,11 +67,12 @@ public class ItemsActivity extends AppCompatActivity {
     }
 
     public void initializeComponents(){
+        getSupportActionBar().setTitle("Search items");
         button_filter_available_items=findViewById(R.id.button_filter_availabe_items);
         button_reset_filter_items=findViewById(R.id.button_reset_filter_items);
         button_filter_unavailable_items=findViewById(R.id.button_filter_unavailable_items);
         progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("fetching data..");
+        progressDialog.setMessage("Fetching data...");
         progressDialog.setCancelable(false);
         progressDialog.show();
         recyclerView=findViewById(R.id.recyclerview_items_container);
@@ -103,7 +90,6 @@ public class ItemsActivity extends AppCompatActivity {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Log.e("firestore errot", error.getMessage());
                     return;
                 }
                 if(value!=null){

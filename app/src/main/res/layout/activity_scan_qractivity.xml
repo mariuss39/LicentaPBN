@@ -12,16 +12,17 @@
         android:layout_height="match_parent"
         app:frameAspectRatioHeight="1"
         app:frameAspectRatioWidth="1"
-        app:frameColor="@color/red_wine_light"
-        app:frameCornersRadius="40dp"
-        app:frameCornersSize="50dp"
+        app:frameVerticalBias="0.25"
+        app:frameColor="@color/red_bright"
+        app:frameCornersRadius="0dp"
+        app:frameCornersSize="100dp"
         app:frameSize="0.75"
-        app:frameThickness="20dp"
+        app:frameThickness="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:maskColor="@color/blue_navy">
+        app:maskColor="@color/grey_hint">
 
     </com.budiyev.android.codescanner.CodeScannerView>
 
@@ -30,16 +31,16 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:id="@+id/tv_scan_qr_activity"
-        android:text="Scan your item"
-        android:textSize="20sp"
+        android:text="Scan Item"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:textColor="@color/green"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/guideline75percent_qr_scanner_activity"></TextView>
+        app:layout_constraintBottom_toBottomOf="@id/guideline60percent_qr_scanner_activity" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline75percent_qr_scanner_activity"
+        android:id="@+id/guideline60percent_qr_scanner_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
