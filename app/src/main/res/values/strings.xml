@@ -42,4 +42,6 @@
     <string name="permission_needed_for_camera_access_allow_permission_in_your_device_s_settings">Permission needed for camera access. Allow permission in your device\'s settings.</string>
     <string name="invalid_scan_try_again">Invalid scan. Try again!</string>
     <string name="fetching_data">Fetching data...</string>
+    <string name="item_scanned_successfully">Item scanned successfully</string>
+    <string name="manual_scan_action_bar">Manual scan</string>
 </resources>

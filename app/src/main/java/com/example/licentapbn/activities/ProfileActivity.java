@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anstrontechnologies.corehelper.AnstronCoreHelper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.licentapbn.R;
@@ -40,8 +41,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.iceteck.silicompressorr.FileUtils;
+import com.iceteck.silicompressorr.SiliCompressor;
 
 
+import org.checkerframework.checker.units.qual.A;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +56,7 @@ import java.util.Map;
 public class ProfileActivity extends AppCompatActivity {
 
     Button button_logout;
+    AnstronCoreHelper anstronCoreHelper;
     Button button_change_profile_picture;
     List<Item> items=new ArrayList<>();
     FirebaseFirestore firestore;
@@ -209,6 +216,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void initializeComponents() {
         getSupportActionBar().setTitle(R.string.profile);
+        anstronCoreHelper=new AnstronCoreHelper(this);
         button_logout=findViewById(R.id.button_logout);
         imageView_profile_picture=findViewById(R.id.profileImage);
         button_change_profile_picture=findViewById(R.id.button_change_profile_image_profileActivity);

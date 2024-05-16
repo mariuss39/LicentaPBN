@@ -44,8 +44,9 @@ public class ManualScanActivity extends AppCompatActivity {
                 tiet_manual_scan.clearFocus();
                 InputMethodManager keyboardManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 keyboardManager.hideSoftInputFromWindow(tiet_manual_scan.getWindowToken(), 0);
-                updateItem();
-                Toast.makeText(getApplicationContext(),"ai scanat cu scuces",Toast.LENGTH_SHORT).show();
+                if(!insertedId.equals("")){
+                    updateItem();
+                }
             }
         });
     }
@@ -58,6 +59,7 @@ public class ManualScanActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         tv_item_manual_scan.setText("Item scanned: "+document.getString("name"));
+                        Toast.makeText(getApplicationContext(), R.string.item_scanned_successfully,Toast.LENGTH_SHORT).show();
                         firestore.collection("items").document(insertedId).update("memberId", firebaseUser.getUid())
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -101,14 +103,17 @@ public class ManualScanActivity extends AppCompatActivity {
                                 });
 
                     } else {
+                        Toast.makeText(getApplicationContext(),"Invalid id",Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    Toast.makeText(getApplicationContext(),"Invalid id2",Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
     private void initializaComponents() {
+        getSupportActionBar().setTitle(R.string.manual_scan_action_bar);
         button_manual_scan=findViewById(R.id.button_manual_scan);
         tiet_manual_scan=findViewById(R.id.tiet_manual_scan);
         firestore=FirebaseFirestore.getInstance();
