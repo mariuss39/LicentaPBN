@@ -7,10 +7,10 @@ public class Member implements Serializable {
     private String name;
     private String email;
     private String phoneNumber;
-    private List<String> itemsId;
     private String id;
     private String imageUrl;
     private List<Item> itemsOwned;
+
     private boolean isExpanded;
 
     public Member() {
@@ -36,7 +36,6 @@ public class Member implements Serializable {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.itemsId = itemsId;
         this.id = id;
         this.imageUrl = imageUrl;
     }
@@ -79,14 +78,6 @@ public class Member implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<String> getItemsId() {
-        return itemsId;
-    }
-
-    public void setItemsId(List<String> itemsId) {
-        this.itemsId = itemsId;
-    }
-
     public String getId() {
         return id;
     }
@@ -101,7 +92,6 @@ public class Member implements Serializable {
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", itemsId=" + itemsId +
                 ", id='" + id + '\'' +
                 '}';
     }

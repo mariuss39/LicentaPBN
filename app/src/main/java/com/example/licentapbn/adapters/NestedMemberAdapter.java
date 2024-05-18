@@ -1,4 +1,4 @@
-package com.example.licentapbn.datatype;
+package com.example.licentapbn.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.licentapbn.R;
+import com.example.licentapbn.datatype.Item;
 
 import java.util.List;
 

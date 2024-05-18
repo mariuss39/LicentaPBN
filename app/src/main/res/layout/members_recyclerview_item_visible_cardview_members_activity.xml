@@ -8,11 +8,6 @@
     app:contentPadding="12dp"
     android:layout_margin="12dp"
     android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/linear_layout">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,16 +23,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_margin="8dp"></ImageView>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Name"
+            android:textAlignment="center"
             android:textStyle="bold"
-            android:textSize="18sp"
+            android:textSize="26sp"
             android:id="@+id/tv_name_member_membersActivity"
             app:layout_constraintStart_toEndOf="@id/imageview_members_picture_MembersActivity"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tv_phoneNumber_member_membersActivity"
-            app:layout_constraintTop_toTopOf="@id/imageview_members_picture_MembersActivity"></TextView>
+            app:layout_constraintBottom_toBottomOf="@id/tv_phoneNumber_member_membersActivity"
+            app:layout_constraintTop_toTopOf="parent"></TextView>
         <TextView
             android:autoLink="phone"
             android:linksClickable="true"
@@ -45,33 +41,11 @@
             android:layout_height="wrap_content"
             android:text="Phone Number"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/tv_items_owned_member_membersActivity"
+
             android:id="@+id/tv_phoneNumber_member_membersActivity"
             app:layout_constraintStart_toEndOf="@id/imageview_members_picture_MembersActivity"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_name_member_membersActivity"></TextView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Items Owned:"
-            android:textSize="12sp"
-            android:textStyle="italic"
-            android:id="@+id/tv_items_owned_member_membersActivity"
-            app:layout_constraintBottom_toBottomOf="@id/imageview_members_picture_MembersActivity"
-            app:layout_constraintStart_toEndOf="@id/imageview_members_picture_MembersActivity"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_phoneNumber_member_membersActivity"></TextView>
+            app:layout_constraintTop_toBottomOf="@id/tv_name_member_membersActivity"
+            ></TextView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/expandable_layout">
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginTop="10dp"
-                android:id="@+id/child_rv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </RelativeLayout>
-    </LinearLayout>
 </androidx.cardview.widget.CardView>

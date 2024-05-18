@@ -1,6 +1,9 @@
 package com.example.licentapbn.datatype;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Item implements Serializable{
         private String name;
@@ -8,17 +11,53 @@ public class Item implements Serializable{
         private String description;
         private String weight;
         private String size;
-        private boolean free;
+        private boolean free; // daca e available sau unavailable
         private String memberId;
         private String memberName;
         private boolean isExpanded;
         private String imageUrl;
+        private boolean isStatusVisible; // daca e VIZIBIL AVAILABLE/UNAVAILABLE
+        private boolean isReservationVisible; // daca e VIZIBIL REZERVAT/NEREZERVAT
+        private boolean isReserved; // daca e Rezervat sau Nerezervat
+        private Map<String, List<String>> reservationsMap=new HashMap<>();
 
         public Item() {
         }
 
+    public boolean isReserved() {
+        return isReserved;
+    }
+
+    public void setReserved(boolean reserved) {
+        isReserved = reserved;
+    }
+
+    public boolean isReservationVisible() {
+        return isReservationVisible;
+    }
+
+    public void setReservationVisible(boolean reserveable) {
+        isReservationVisible = reserveable;
+    }
+
+    public Map<String, List<String>> getReservationsMap() {
+        return reservationsMap;
+    }
+
+    public void setReservationsMap(Map<String, List<String>> reservationsMap) {
+        this.reservationsMap = reservationsMap;
+    }
+
     public String getMemberName() {
         return memberName;
+    }
+
+    public boolean isStatusVisible() {
+        return isStatusVisible;
+    }
+
+    public void setStatusVisible(boolean statusVisible) {
+        isStatusVisible = statusVisible;
     }
 
     public void setMemberName(String memberName) {
@@ -56,6 +95,9 @@ public class Item implements Serializable{
         this.memberId = memberId;
         this.isExpanded=false;
         this.imageUrl=imageUrl;
+        this.isStatusVisible=false;
+        this.isReservationVisible=false;
+        this.isReserved=false;
     }
 
     public String getName() {

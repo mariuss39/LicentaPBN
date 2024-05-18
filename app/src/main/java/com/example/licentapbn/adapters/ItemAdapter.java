@@ -1,30 +1,24 @@
-package com.example.licentapbn.datatype;
+package com.example.licentapbn.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.ViewUtils;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.licentapbn.R;
+import com.example.licentapbn.datatype.Item;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
@@ -47,52 +41,53 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
-        holder.tv1.setText(items.get(position).getName());
+        holder.tvItemName.setText(items.get(position).getName());
         holder.invisibleLayout.setVisibility(View.GONE);
-        holder.tvItemWeight.setText("Weight: "+items.get(position).getWeight());
-        holder.tvItemSize.setText("Size: "+items.get(position).getSize());
-        holder.tvMemberName.setText("Taken by: "+items.get(position).getMemberName());
-        holder.tv3.setText(items.get(position).getDescription());
-        for(Item item: items){
-            item.setExpanded(false);
-        }
-        if(!items.get(position).getMemberName().equals("Storage")) {
-            holder.tvMemberName.setVisibility(View.VISIBLE);
-        }
-
-        if(items.get(position).isFree()){
-            holder.tv2.setText("Availabe");
-            holder.tv2.setTextColor(Color.GREEN);
-        }else{
-            holder.tv2.setTextColor(Color.RED);
-            holder.tv2.setText("Unavailabe");
-        }
-
         Glide.with(context).load(items.get(position).getImageUrl()).into(holder.imageView);
         holder.item_cardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (items.get(position).isExpanded()) {
                     holder.invisibleLayout.setVisibility(View.GONE);
-                    holder.tv3.setVisibility(View.GONE);
-                    holder.tvItemSize.setVisibility(View.GONE);
-                    holder.tvItemWeight.setVisibility(View.GONE);
-                    holder.tvMemberName.setVisibility(View.GONE);
                     items.get(position).setExpanded(false);
 
                 } else {
                     holder.invisibleLayout.setVisibility(View.VISIBLE);
-                    holder.tv3.setVisibility(View.VISIBLE);
-                    holder.tvItemSize.setVisibility(View.VISIBLE);
-                    if(!items.get(position).getMemberName().equals("Storage")) {
-                        holder.tvMemberName.setVisibility(View.VISIBLE);
-                    }
-                    holder.tvItemWeight.setVisibility(View.VISIBLE);
                     items.get(position).setExpanded(true);
                 }
             }
         });
 
+        if(items.get(position).isFree()) {
+            holder.tvItemStatus.setText("Available");
+            holder.tvItemStatus.setTextColor(Color.GREEN);}
+        else{
+            holder.tvItemStatus.setText("Unavailable");
+            holder.tvItemStatus.setTextColor(Color.RED);
+        }
+        if(items.get(position).isReserved()){
+            holder.tvReservationStatusItem.setText("Reserved");
+            holder.tvReservationStatusItem.setTextColor(Color.parseColor("#ffb703"));
+        }else{
+            holder.tvReservationStatusItem.setText("Available");
+            holder.tvReservationStatusItem.setTextColor(Color.GREEN);
+        }
+        if(items.get(position).isStatusVisible()){
+            holder.tvItemStatus.setVisibility(View.VISIBLE);
+        }else{
+            holder.tvItemStatus.setVisibility(View.GONE);
+        }
+        if(items.get(position).isReservationVisible()) {
+            holder.tvReservationStatusItem.setVisibility(View.VISIBLE);
+        }else{
+            holder.tvReservationStatusItem.setVisibility(View.GONE);
+        }
+
+
+    }
+    public void setItems(List<Item> itemss) {
+        this.items = itemss;
+        notifyDataSetChanged(); // Notifică RecyclerView despre schimbările făcute în listă
     }
     public void filterItemsByFree(boolean isFree) {
         List<Item> filteredList = new ArrayList<>();
@@ -118,22 +113,25 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
 
 
     public static class ItemHolder extends RecyclerView.ViewHolder {
-        TextView tv1,tv2,tv3,tvItemWeight,tvItemSize,tvMemberName;
+        TextView tvItemName,tvItemStatus,tvReservationStatusItem;
         ImageView imageView;
         CardView item_cardview;
         ConstraintLayout invisibleLayout;
+        Button btnReserve;
+        Button btnCancelReserve;
+
 
         public ItemHolder(@NonNull View itemView) {
             super(itemView);
-            tv1 = itemView.findViewById(R.id.tv_name_item);
-            tv2 = itemView.findViewById(R.id.tv_status_item);
-            tv3=itemView.findViewById(R.id.tv_details);
-            tvItemWeight = itemView.findViewById(R.id.tv_item_weight);
-            tvItemSize=itemView.findViewById(R.id.tv_item_size);
-            tvMemberName=itemView.findViewById(R.id.tv_owner_name);
+            tvReservationStatusItem=itemView.findViewById(R.id.tv_reservation_status_item);
+            tvItemName= itemView.findViewById(R.id.tv_name_item);
+            tvItemStatus = itemView.findViewById(R.id.tv_status_item);
             item_cardview=itemView.findViewById(R.id.item_cardview);
             invisibleLayout=itemView.findViewById(R.id.invisible_constraint_layout);
             imageView=itemView.findViewById(R.id.recyclerImage);
+            btnReserve=itemView.findViewById(R.id.tv_reserve);
+            btnCancelReserve=itemView.findViewById(R.id.tv_cancel_reserve);
+
         }
 
     }

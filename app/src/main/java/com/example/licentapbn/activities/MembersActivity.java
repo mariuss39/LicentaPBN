@@ -7,23 +7,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.licentapbn.R;
-import com.example.licentapbn.datatype.Item;
-import com.example.licentapbn.datatype.ItemAdapter;
-import com.example.licentapbn.datatype.Member;
-import com.example.licentapbn.datatype.MemberAdapter;
+import com.example.licentapbn.adapters.MemberAdapter;
 import com.example.licentapbn.datatype.MemberWithItems;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -36,7 +25,6 @@ import java.util.List;
 public class MembersActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     FirebaseUser firebaseUser;
-    List<Item> items=new ArrayList<>();
     MemberAdapter memberAdapter;
     FirebaseFirestore firestore;
     ProgressDialog progressDialog;
@@ -51,7 +39,7 @@ public class MembersActivity extends AppCompatActivity {
         membersWithItemsDataChangedListen();
     }
     private void initializeComponents(){
-        getSupportActionBar().setTitle("Search members");
+        getSupportActionBar().setTitle("Members");
         recyclerView=findViewById(R.id.recycle_view_members);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -60,7 +48,7 @@ public class MembersActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
         firestore= FirebaseFirestore.getInstance();
-        memberAdapter=new MemberAdapter(MembersActivity.this,membersWithItems,items);
+        memberAdapter=new MemberAdapter(MembersActivity.this,membersWithItems);
         recyclerView.setAdapter(memberAdapter);
         firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
 
@@ -75,7 +63,6 @@ public class MembersActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                     return;
-
                 }
                 membersWithItems.clear();
 
@@ -84,29 +71,12 @@ public class MembersActivity extends AppCompatActivity {
                     String memberPhoneNumber =(String) memberDocument.get("phoneNumber");
                     String memberName = (String) memberDocument.get("name");
                     String memberImageURl= (String) memberDocument.get("imageUrl");
-
-                    firestore.collection("items")
-                            .whereEqualTo("memberId", memberDocument.getId())
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                @Override
-                                public void onSuccess(QuerySnapshot itemsResult) {
-                                    List<Item> itemsAux = new ArrayList<>();
-                                    for (QueryDocumentSnapshot itemDocument : itemsResult) {
-                                        String itemName = (String) itemDocument.get("name");
-                                        String imageUrl= (String) itemDocument.get("imageUrl");
-                                        Item item = new Item( itemName, imageUrl);
-                                        itemsAux.add(item);
-                                    }
-                                    MemberWithItems memberWithItems = new MemberWithItems(memberName, memberPhoneNumber, itemsAux,memberImageURl);
-                                    membersWithItems.add(memberWithItems);
-                                    memberAdapter.notifyDataSetChanged();
-                                    if (progressDialog.isShowing()) {
-                                        progressDialog.dismiss();
-                                    }
-
-                                }
-                            });
+                    MemberWithItems memberWithItems = new MemberWithItems(memberName, memberPhoneNumber,memberImageURl);
+                    membersWithItems.add(memberWithItems);
+                    memberAdapter.notifyDataSetChanged();
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                 }
             }
         });

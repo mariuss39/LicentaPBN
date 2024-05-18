@@ -23,7 +23,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.licentapbn.R;
 import com.example.licentapbn.datatype.Item;
-import com.example.licentapbn.datatype.ItemAdapterProfileActivity;
+import com.example.licentapbn.adapters.ItemAdapterProfileActivity;
 import com.example.licentapbn.datatype.Member;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,13 +41,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.iceteck.silicompressorr.FileUtils;
-import com.iceteck.silicompressorr.SiliCompressor;
 
 
-import org.checkerframework.checker.units.qual.A;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

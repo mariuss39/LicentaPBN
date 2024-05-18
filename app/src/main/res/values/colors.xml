@@ -19,5 +19,6 @@
     <color name="red_wine">#560809</color>
     <color name="red_wine_light">#700e0f</color>
     <color name="grey_hint">#A6A6A6</color>
+    <color name="orange_reserved">#ffb703</color>
 
 </resources>

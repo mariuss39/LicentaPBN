@@ -1,31 +1,22 @@
-package com.example.licentapbn.datatype;
+package com.example.licentapbn.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.ViewUtils;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.licentapbn.R;
+import com.example.licentapbn.datatype.Item;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ItemAdapterProfileActivity extends RecyclerView.Adapter<ItemAdapterProfileActivity.ItemHolder>{

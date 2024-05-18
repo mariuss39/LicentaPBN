@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MemberPageActivity">
+    <ImageView
+        android:id="@+id/MemberPageMemberImage"
+        android:layout_width="120sp"
+        android:layout_height="120sp"
+        android:src="@drawable/person_pin_icon_profile_picture_holder"
+        android:scaleType="fitCenter"
+        android:layout_margin="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tv_name_MemberPageActivity"
+        android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:text="@string/member_name"
+        app:layout_constraintTop_toTopOf="@id/MemberPageMemberImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_phoneNumber_memberPageActivity"
+        app:layout_constraintStart_toEndOf="@id/MemberPageMemberImage" />
+
+    <TextView
+        android:id="@+id/tv_phoneNumber_memberPageActivity"
+        android:layout_width="0dp"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:layout_height="wrap_content"
+        android:text="@string/phone_number"
+        app:layout_constraintTop_toBottomOf="@id/tv_name_MemberPageActivity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/MemberPageMemberImage"
+        app:layout_constraintStart_toEndOf="@id/MemberPageMemberImage" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSelectDate"
+        android:textColor="@color/black"
+        android:text="Select date:"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/MemberPageMemberImage"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="25dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintBottom_toTopOf="@id/recyclerview_items_taken_MemberPageActivity" />
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick Date \u25BC"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:textSize="18sp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toTopOf="@id/recyclerview_items_taken_MemberPageActivity"
+        app:layout_constraintStart_toEndOf="@id/tvSelectDate"
+         app:layout_constraintTop_toBottomOf="@id/MemberPageMemberImage"
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tvSelectDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/recyclerview_items_taken_MemberPageActivity"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
