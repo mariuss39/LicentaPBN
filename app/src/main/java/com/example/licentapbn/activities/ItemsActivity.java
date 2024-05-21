@@ -21,6 +21,8 @@ import com.example.licentapbn.adapters.ItemAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,10 +40,14 @@ import java.util.Map;
 public class ItemsActivity extends AppCompatActivity {
     List<Item> items = new ArrayList<>();
     RecyclerView recyclerView;
+    FirebaseUser firebaseUser;
     ProgressDialog progressDialog;
     Button button_filter_available_items;
     Button button_reset_filter_items;
     Button button_filter_unavailable_items;
+    Button future_button_filter_available_items;
+    Button future_button_reset_filter_items;
+    Button future_button_filter_unavailable_items;
     String todayDate = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date());
     ItemAdapter itemAdapter;
     FirebaseFirestore firestore;
@@ -55,34 +61,80 @@ public class ItemsActivity extends AppCompatActivity {
         initializeComponents();
         itemsDataChangdListen();
         setFilterButtonsOnClickListeners();
+        setFutureFilterButtonsOnClickListeners();
         tvDate.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 List<Item> filteredItems =new ArrayList<>(items);
+                itemAdapter.clearFilter();
                 //for Today
                 if (todayDate.equals(tvDate.getText().toString())) {
+                    future_button_reset_filter_items.setVisibility(View.INVISIBLE);
+                    future_button_filter_available_items.setVisibility(View.INVISIBLE);
+                    future_button_filter_unavailable_items.setVisibility(View.INVISIBLE);
+                    button_reset_filter_items.setVisibility(View.VISIBLE);
+                    button_filter_available_items.setVisibility(View.VISIBLE);
+                    button_filter_unavailable_items.setVisibility(View.VISIBLE);
                     for (Item item : filteredItems) {
+                        item.setExpanded(false);
                         if (!item.isFree()){
+                            Log.e("BBB","BBB1");
                             item.setStatusVisible(true);
                             Map<String, List<String>> mapField = item.getReservationsMap();
                             if (mapField != null && mapField.containsKey(todayDate)) {
+                                Log.e("BBB","BBB2");
+                                if((mapField.get(todayDate).get(1)).equals(firebaseUser.getUid().toString())){
+                                    Log.e("BBB","BBB3");
+                                    item.setCancelReserveButtonVisible(true);
+                                    item.setReserveButtonVisible(false);
+                                }
+                                else{
+                                    Log.e("BBB","BBB4");
+                                    item.setCancelReserveButtonVisible(false);
+                                    item.setReserveButtonVisible(false);
+                                }
+                                Log.e("BBB","BBB5");
                                 item.setReserved(true);
-                                item.setReservationVisible(true);
+                                item.setReservationVisible(true);// doar pe id meu
+//                                item.setReserveButtonVisible(false);
+                                //
                             }else{
+                                Log.e("BBB","BBB6");
+                                item.setCancelReserveButtonVisible(false);
+                                item.setReserveButtonVisible(true);// doar pe id meu
                                 item.setReservationVisible(false);
                             }
                         }else{
+                            Log.e("BBB","BBB11");
+
                                 Map<String, List<String>> mapField = item.getReservationsMap();
                                 if(mapField!=null && mapField.containsKey(todayDate)){
+                                    Log.e("BBB","BBB22");
+                                    if((mapField.get(todayDate).get(1)).equals(firebaseUser.getUid().toString())){
+                                        Log.e("BBB","BBB33");
+                                        item.setCancelReserveButtonVisible(true);
+                                        item.setReserveButtonVisible(false);
+                                    }
+                                    else{
+                                        Log.e("BBB","BBB44");
+                                        item.setCancelReserveButtonVisible(false);
+                                        item.setReserveButtonVisible(false);
+                                    }
+                                    Log.e("BBB","BBB55");
                                     item.setReserved(true);
+//                                    item.setReserveButtonVisible(true);
                                     item.setReservationVisible(true);
                                     item.setStatusVisible(false);
                                 }else{
+                                    Log.e("BBB","BBB66");
+                                    item.setReserveButtonVisible(true);
                                     item.setReserved(false);
+                                    item.setCancelReserveButtonVisible(false);
                                     item.setStatusVisible(true);
                                     item.setReservationVisible(false);
                                 }
@@ -91,14 +143,35 @@ public class ItemsActivity extends AppCompatActivity {
                     }
                 }
                 else{
+                    future_button_reset_filter_items.setVisibility(View.VISIBLE);
+                    future_button_filter_available_items.setVisibility(View.VISIBLE);
+                    future_button_filter_unavailable_items.setVisibility(View.VISIBLE);
+                    button_reset_filter_items.setVisibility(View.INVISIBLE);
+                    button_filter_available_items.setVisibility(View.INVISIBLE);
+                    button_filter_unavailable_items.setVisibility(View.INVISIBLE);
                     for(Item item:filteredItems){
+                        item.setExpanded(false);
                         Map<String, List<String>> mapField = item.getReservationsMap();
                         if((mapField!=null && mapField.containsKey(tvDate.getText().toString()))){
+                            if((mapField.get(tvDate.getText().toString()).get(1)).equals(firebaseUser.getUid())){
+                                Log.e("BBB","BBB33");
+                                item.setCancelReserveButtonVisible(true);
+                                item.setReserveButtonVisible(false);
+                            }
+                            else{
+                                Log.e("BBB","BBB44");
+                                item.setCancelReserveButtonVisible(false);
+                                item.setReserveButtonVisible(false);
+                            }
+                            //este rezervat, verific daca de mn sau de altu, mai sus
                             item.setStatusVisible(false);
                             item.setReserved(true);
                             item.setReservationVisible(true);
                         }
                         else{
+                            //nu este rezervat
+                            item.setCancelReserveButtonVisible(false);
+                            item.setReserveButtonVisible(true);
                             item.setStatusVisible(false);
                             item.setReserved(false);
                             item.setReservationVisible(true);
@@ -125,13 +198,13 @@ public class ItemsActivity extends AppCompatActivity {
         });
     }
 
-
     private void setFilterButtonsOnClickListeners() {
         button_filter_available_items.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 itemAdapter.clearFilter();
                 itemAdapter.filterItemsByFree(true);
+                itemAdapter.filterItemsByReserved(true);
             }
         });
         button_reset_filter_items.setOnClickListener(new View.OnClickListener() {
@@ -149,11 +222,37 @@ public class ItemsActivity extends AppCompatActivity {
         });
     }
 
+    private void setFutureFilterButtonsOnClickListeners() {
+        future_button_filter_available_items.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemAdapter.clearFilter();
+                itemAdapter.filterItemsByReserved(true);
+            }
+        });
+        future_button_reset_filter_items.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemAdapter.clearFilter();
+            }
+        });
+        future_button_filter_unavailable_items.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemAdapter.clearFilter();
+                itemAdapter.filterItemsByReserved(false);
+            }
+        });
+    }
+
     public void initializeComponents(){
         getSupportActionBar().setTitle("Search items");
         button_filter_available_items=findViewById(R.id.button_filter_availabe_items);
         button_reset_filter_items=findViewById(R.id.button_reset_filter_items);
         button_filter_unavailable_items=findViewById(R.id.button_filter_unavailable_items);
+        future_button_filter_available_items=findViewById(R.id.future_button_filter_availabe_items);
+        future_button_reset_filter_items=findViewById(R.id.future_button_reset_filter_items);
+        future_button_filter_unavailable_items=findViewById(R.id.future_button_filter_unavailable_items);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Fetching data...");
         progressDialog.setCancelable(false);
@@ -165,7 +264,8 @@ public class ItemsActivity extends AppCompatActivity {
         itemAdapter=new ItemAdapter(ItemsActivity.this,items);
         recyclerView.setAdapter(itemAdapter);
         tvDate=findViewById(R.id.tvDate_itemsactivity);
-        tvDate.setText(todayDate);
+        tvDate.setText("Pick date \u25BC");
+        firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
     }
     private void itemsDataChangdListen() {
         firestore.collection("items").addSnapshotListener(new EventListener<QuerySnapshot>() {

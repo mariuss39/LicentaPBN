@@ -16,6 +16,9 @@ public class Item implements Serializable{
         private String memberName;
         private boolean isExpanded;
         private String imageUrl;
+        private boolean isReserveButtonVisible;
+        private boolean isCancelReserveButtonVisible;
+
         private boolean isStatusVisible; // daca e VIZIBIL AVAILABLE/UNAVAILABLE
         private boolean isReservationVisible; // daca e VIZIBIL REZERVAT/NEREZERVAT
         private boolean isReserved; // daca e Rezervat sau Nerezervat
@@ -85,6 +88,22 @@ public class Item implements Serializable{
         this.imageUrl = imageUrl;
     }
 
+    public boolean isReserveButtonVisible() {
+        return isReserveButtonVisible;
+    }
+
+    public void setReserveButtonVisible(boolean reserveButtonVisible) {
+        isReserveButtonVisible = reserveButtonVisible;
+    }
+
+    public boolean isCancelReserveButtonVisible() {
+        return isCancelReserveButtonVisible;
+    }
+
+    public void setCancelReserveButtonVisible(boolean cancelReserveButtonVisible) {
+        isCancelReserveButtonVisible = cancelReserveButtonVisible;
+    }
+
     public Item(String name, String id, String description, String weight, String size, boolean free, String memberId, String imageUrl) {
         this.name = name;
         this.id = id;
@@ -98,6 +117,8 @@ public class Item implements Serializable{
         this.isStatusVisible=false;
         this.isReservationVisible=false;
         this.isReserved=false;
+        isCancelReserveButtonVisible=false;
+        isReserveButtonVisible=false;
     }
 
     public String getName() {

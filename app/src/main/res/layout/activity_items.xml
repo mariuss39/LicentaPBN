@@ -36,6 +36,43 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/button_reset_filter_items"></Button>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Available"
+        android:padding="12dp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:id="@+id/future_button_filter_availabe_items"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/future_button_reset_filter_items"></Button>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="All"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:padding="12dp"
+        android:id="@+id/future_button_reset_filter_items"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/future_button_filter_availabe_items"
+        app:layout_constraintEnd_toStartOf="@id/future_button_filter_unavailable_items"
+        ></Button>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reserved"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:padding="12dp"
+        android:id="@+id/future_button_filter_unavailable_items"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/future_button_reset_filter_items"></Button>
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -82,6 +82,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         }else{
             holder.tvReservationStatusItem.setVisibility(View.GONE);
         }
+        if(items.get(position).isCancelReserveButtonVisible()){
+            holder.btnCancelReserve.setVisibility(View.VISIBLE);
+        }
+        else{
+            holder.btnCancelReserve.setVisibility(View.GONE);
+        }
+        if(items.get(position).isReserveButtonVisible()){
+            holder.btnReserve.setVisibility(View.VISIBLE);
+        }
+        else{
+            holder.btnReserve.setVisibility(View.GONE);
+        }
 
 
     }
@@ -93,6 +105,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         List<Item> filteredList = new ArrayList<>();
         for (Item item : items) {
             if (item.isFree()==isFree) {
+                filteredList.add(item);
+            }
+        }
+        // Actualizează lista de elemente din adapter cu lista filtrată
+        items = filteredList;
+        notifyDataSetChanged();
+    }
+    public void filterItemsByReserved(boolean isReserved) {
+        List<Item> filteredList = new ArrayList<>();
+        for (Item item : items) {
+            if (item.isReserved()==!isReserved) {
                 filteredList.add(item);
             }
         }
