@@ -123,7 +123,6 @@ public class ProfileActivity extends AppCompatActivity {
                                                     public void onSuccess(Void unused) {
                                                     }
                                                 });
-                                            } else {
                                             }
                                         }
                                     }

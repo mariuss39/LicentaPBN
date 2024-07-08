@@ -64,9 +64,6 @@ public class ManualScanActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                        } else {
-                                        }
                                     }
                                 });
                         firestore.collection("members").document(firebaseUser.getUid()).get()
@@ -88,16 +85,9 @@ public class ManualScanActivity extends AppCompatActivity {
                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                if (task.isSuccessful()) {
-                                                                    // Actualizarea a fost finalizată cu succes
-                                                                } else {
-                                                                    // A apărut o eroare la actualizare
-                                                                }
                                                             }
                                                         });
-                                            } else {
                                             }
-                                        } else {
                                         }
                                     }
                                 });

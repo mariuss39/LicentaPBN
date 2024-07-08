@@ -2,12 +2,14 @@ package com.example.licentapbn.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -17,20 +19,54 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.licentapbn.R;
 import com.example.licentapbn.datatype.Item;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
 
     Context context;
     List<Item> items;
+    FirebaseFirestore firestore=FirebaseFirestore.getInstance();
     List<Item> itemsCopy;
+    List<String> memberIdAndNameForReservation=new ArrayList<>();
+    String tvDateInformationForReservation;
+    String currentUseriD;
 
-    public ItemAdapter(Context context, List<Item> items) {
+
+//    public ItemAdapter(Context context, List<Item> items) {
+//        this.context = context;
+//        this.itemsCopy=items;
+////        this.items =this.itemsCopy;
+//    }
+
+//    public ItemAdapter(Context context, List<Item> items, String currentUseriD) {
+//        this.context = context;
+//        this.items = items;
+//        this.itemsCopy = items;
+//        this.items =this.itemsCopy;
+//        this.currentUseriD = currentUseriD;
+//    }
+
+    public ItemAdapter(Context context, List<Item> items, String currentUseriD, List<String> memberIdAndNameForReservation, String tvDateInformationForReservation) {
         this.context = context;
-        this.itemsCopy=items;
-        this.items =this.itemsCopy;
+        this.items = items;
+        this.itemsCopy = items;
+        this.memberIdAndNameForReservation = memberIdAndNameForReservation;
+        this.tvDateInformationForReservation = tvDateInformationForReservation;
+        this.currentUseriD = currentUseriD;
     }
 
     @NonNull
@@ -44,6 +80,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         holder.tvItemName.setText(items.get(position).getName());
         holder.invisibleLayout.setVisibility(View.GONE);
         Glide.with(context).load(items.get(position).getImageUrl()).into(holder.imageView);
+
         holder.item_cardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,7 +132,79 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
             holder.btnReserve.setVisibility(View.GONE);
         }
 
+        holder.btnReserve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obține ID-ul elementului
+                String itemId = items.get(position).getId();
 
+                // Numele cheii și valoarea de adăugat
+                String key = tvDateInformationForReservation; // Înlocuiește cu cheia relevantă
+                List<String> value = memberIdAndNameForReservation; // Înlocuiește cu valoarea relevantă
+                // Actualizează documentul
+                firestore.collection("items").document(itemId).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            // Obține mapa actuală
+                            Map<String, List<String>> reservationsMap = (Map<String, List<String>>) document.get("reservationsMap");
+                            if (reservationsMap == null) {
+                                reservationsMap = new HashMap<>();
+                            }
+                            // Obține lista pentru cheia specifică sau creează una nouă
+
+                            reservationsMap.put(key, value);
+
+                            // Trimite actualizarea la Firestore
+                            firestore.collection("items").document(itemId).update("reservationsMap", reservationsMap)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(v.getContext(), "Reservation added", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(v.getContext(), "Error adding reservation", Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(v.getContext(), "Document does not exist", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(v.getContext(), "Failed to get document", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                DocumentReference docRef =firestore.collection("members").document(memberIdAndNameForReservation.get(1)).collection("reservations").document(tvDateInformationForReservation);
+
+                // Adăugați un nou element în array-ul "reservationsMap"
+                docRef.set(new HashMap<String, Object>())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    // Documentul a fost creat sau există deja
+                                    Log.d("revev", "Documentul a fost creat sau există deja");
+
+                                    // Adăugați itemId în array-ul "reservationsMap"
+                                    docRef.update("reservationsMap", FieldValue.arrayUnion(itemId))
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        // Elementul "itemId" a fost adăugat cu succes în array
+                                                        Log.d("revev", "Elementul a fost adăugat cu succes în array");
+                                                    } else {
+                                                        // Eroare la adăugarea elementului în array
+                                                        Log.e("revev", "Eroare la adăugarea elementului în array", task.getException());
+                                                    }
+                                                }
+                                            });
+                                } else {
+                                    // Eroare la crearea documentului
+                                    Log.e("revev", "Eroare la crearea documentului", task.getException());
+                                }
+                            }
+                        });
+
+                }
+
+        });
     }
     public void setItems(List<Item> itemss) {
         this.items = itemss;
@@ -112,6 +221,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         items = filteredList;
         notifyDataSetChanged();
     }
+    public void updateDate(String newDate) {
+        this.tvDateInformationForReservation = newDate;
+        notifyDataSetChanged(); // Notifică RecyclerView despre modificare
+    }
     public void filterItemsByReserved(boolean isReserved) {
         List<Item> filteredList = new ArrayList<>();
         for (Item item : items) {
@@ -127,6 +240,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         items = itemsCopy; // Lista filtrată devine lista completă de elemente
         notifyDataSetChanged();
     }
+
 
     @Override
     public int getItemCount() {

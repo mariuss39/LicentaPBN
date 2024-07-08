@@ -24,6 +24,7 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -65,9 +66,11 @@ public class ItemsActivity extends AppCompatActivity {
         tvDate.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
             @Override
             public void afterTextChanged(Editable s) {
                 List<Item> filteredItems =new ArrayList<>(items);
@@ -88,7 +91,7 @@ public class ItemsActivity extends AppCompatActivity {
                             Map<String, List<String>> mapField = item.getReservationsMap();
                             if (mapField != null && mapField.containsKey(todayDate)) {
                                 Log.e("BBB","BBB2");
-                                if((mapField.get(todayDate).get(1)).equals(firebaseUser.getUid().toString())){
+                                if(firebaseUser.getUid().equals(mapField.get(todayDate).get(1))){
                                     Log.e("BBB","BBB3");
                                     item.setCancelReserveButtonVisible(true);
                                     item.setReserveButtonVisible(false);
@@ -115,7 +118,7 @@ public class ItemsActivity extends AppCompatActivity {
                                 Map<String, List<String>> mapField = item.getReservationsMap();
                                 if(mapField!=null && mapField.containsKey(todayDate)){
                                     Log.e("BBB","BBB22");
-                                    if((mapField.get(todayDate).get(1)).equals(firebaseUser.getUid().toString())){
+                                    if(firebaseUser.getUid().equals((mapField.get(todayDate).get(1)))){
                                         Log.e("BBB","BBB33");
                                         item.setCancelReserveButtonVisible(true);
                                         item.setReserveButtonVisible(false);
@@ -153,7 +156,7 @@ public class ItemsActivity extends AppCompatActivity {
                         item.setExpanded(false);
                         Map<String, List<String>> mapField = item.getReservationsMap();
                         if((mapField!=null && mapField.containsKey(tvDate.getText().toString()))){
-                            if((mapField.get(tvDate.getText().toString()).get(1)).equals(firebaseUser.getUid())){
+                            if(firebaseUser.getUid().equals((mapField.get(tvDate.getText().toString()).get(1)))){
                                 Log.e("BBB","BBB33");
                                 item.setCancelReserveButtonVisible(true);
                                 item.setReserveButtonVisible(false);
@@ -191,6 +194,8 @@ public class ItemsActivity extends AppCompatActivity {
                     public void onPositiveButtonClick(Long selection) {
                         String selectedDate = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date(selection));
                         tvDate.setText(selectedDate);
+                        itemAdapter.updateDate(tvDate.getText().toString());
+
                     }
                 });
                 materialDatePicker.show(getSupportFragmentManager(),"tag");
@@ -247,6 +252,8 @@ public class ItemsActivity extends AppCompatActivity {
 
     public void initializeComponents(){
         getSupportActionBar().setTitle("Search items");
+        firestore=FirebaseFirestore.getInstance();
+        firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
         button_filter_available_items=findViewById(R.id.button_filter_availabe_items);
         button_reset_filter_items=findViewById(R.id.button_reset_filter_items);
         button_filter_unavailable_items=findViewById(R.id.button_filter_unavailable_items);
@@ -260,12 +267,29 @@ public class ItemsActivity extends AppCompatActivity {
         recyclerView=findViewById(R.id.recyclerview_items_container);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        firestore=FirebaseFirestore.getInstance();
-        itemAdapter=new ItemAdapter(ItemsActivity.this,items);
-        recyclerView.setAdapter(itemAdapter);
         tvDate=findViewById(R.id.tvDate_itemsactivity);
         tvDate.setText("Pick date \u25BC");
-        firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
+        itemAdapter=new ItemAdapter(ItemsActivity.this,items,firebaseUser.toString(),getUserIdAndNameForReservation(),tvDate.getText().toString());
+        recyclerView.setAdapter(itemAdapter);
+
+    }
+    private List<String> getUserIdAndNameForReservation(){
+        List<String> dataToBeAddedForReservation=new ArrayList<>();
+        firestore.collection("members").document(firebaseUser.getUid()).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            String name = documentSnapshot.getString("name");
+                            String idd = documentSnapshot.getString("id");
+                            dataToBeAddedForReservation.add(name);
+                            dataToBeAddedForReservation.add(idd);
+
+                        }
+                    }
+                });
+        return dataToBeAddedForReservation;
     }
     private void itemsDataChangdListen() {
         firestore.collection("items").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -309,6 +333,7 @@ public class ItemsActivity extends AppCompatActivity {
         });
     }
 }
+
 
 
 

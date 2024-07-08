@@ -89,13 +89,10 @@ public class ScanQRActivity extends AppCompatActivity {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                                 if (task.isSuccessful()) {
-                                                                                } else {
                                                                                 }
                                                                             }
                                                                         });
-                                                            } else {
                                                             }
-                                                        } else {
                                                         }
                                                     }
                                                 });
@@ -103,7 +100,6 @@ public class ScanQRActivity extends AppCompatActivity {
                                     } else {
                                         tv_scanItems_qr_code.setText(R.string.invalid_scan_try_again);
                                     }
-                                } else {
                                 }
                             }
                         });

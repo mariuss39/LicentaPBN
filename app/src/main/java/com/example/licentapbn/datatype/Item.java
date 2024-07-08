@@ -1,5 +1,7 @@
 package com.example.licentapbn.datatype;
 
+import android.widget.Button;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,8 @@ public class Item implements Serializable{
         private String imageUrl;
         private boolean isReserveButtonVisible;
         private boolean isCancelReserveButtonVisible;
+        Button reserveItem;
+        Button cancelReserveItem;
 
         private boolean isStatusVisible; // daca e VIZIBIL AVAILABLE/UNAVAILABLE
         private boolean isReservationVisible; // daca e VIZIBIL REZERVAT/NEREZERVAT
@@ -26,6 +30,23 @@ public class Item implements Serializable{
 
         public Item() {
         }
+
+    public Button getReserveItem() {
+        return reserveItem;
+    }
+
+    public void setReserveItem(Button reserveItem) {
+        this.reserveItem = reserveItem;
+    }
+
+    public Button getCancelReserveItem() {
+        return cancelReserveItem;
+    }
+
+
+    public void setCancelReserveItem(Button cancelReserveItem) {
+        this.cancelReserveItem = cancelReserveItem;
+    }
 
     public boolean isReserved() {
         return isReserved;

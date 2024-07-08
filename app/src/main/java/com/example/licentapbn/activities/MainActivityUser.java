@@ -61,7 +61,9 @@ public class MainActivityUser extends AppCompatActivity {
         qrScannerCardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent qrScannerActivityIntent=new Intent(getApplicationContext(), ScanQRActivity.class);
+                Intent qrScannerActivityIntent=new Intent(
+                        getApplicationContext(),
+                        ScanQRActivity.class);
                 startActivity(qrScannerActivityIntent);
             }
         });
