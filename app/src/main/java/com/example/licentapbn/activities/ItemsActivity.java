@@ -209,12 +209,13 @@ public class ItemsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 itemAdapter.clearFilter();
                 itemAdapter.filterItemsByFree(true);
-                itemAdapter.filterItemsByReserved(true);
+//                itemAdapter.filterItemsByReserved(true);
             }
         });
         button_reset_filter_items.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 itemAdapter.clearFilter();
             }
         });

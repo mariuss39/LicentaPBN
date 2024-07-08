@@ -29,10 +29,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
@@ -151,9 +157,21 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
                             if (reservationsMap == null) {
                                 reservationsMap = new HashMap<>();
                             }
+                            List<String> reservationsHistory = (List<String>) document.get("reservationsHistory");
+                            if (reservationsHistory == null) {
+                                reservationsHistory = new ArrayList<>();
+                            }
+                            String reservationEntry =itemId+"-"+memberIdAndNameForReservation.get(0) + "-" +memberIdAndNameForReservation.get(1)+"-"+"reservation"+"-"+new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date())+"-"+tvDateInformationForReservation;
+
+                            // Adaugă noua intrare în lista de istoric
+                            reservationsHistory.add(reservationEntry);
                             // Obține lista pentru cheia specifică sau creează una nouă
 
                             reservationsMap.put(key, value);
+                            firestore.collection("items").document(itemId).update("reservationsHistory", reservationsHistory)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(v.getContext(), "Reservation added", Toast.LENGTH_SHORT).show();
+                                    });
 
                             // Trimite actualizarea la Firestore
                             firestore.collection("items").document(itemId).update("reservationsMap", reservationsMap)
@@ -166,47 +184,204 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
                         } else {
                             Toast.makeText(v.getContext(), "Document does not exist", Toast.LENGTH_SHORT).show();
                         }
+                        items.get(position).setReserved(true);
+                        items.get(position).setReservationVisible(true);
+                        items.get(position).setReserveButtonVisible(false);
+                        items.get(position).setCancelReserveButtonVisible(true);
+
                     } else {
                         Toast.makeText(v.getContext(), "Failed to get document", Toast.LENGTH_SHORT).show();
                     }
                 });
                 DocumentReference docRef =firestore.collection("members").document(memberIdAndNameForReservation.get(1)).collection("reservations").document(tvDateInformationForReservation);
-
-                // Adăugați un nou element în array-ul "reservationsMap"
-                docRef.set(new HashMap<String, Object>())
+                docRef.update("reservationsMap", FieldValue.arrayUnion(itemId))
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    // Documentul a fost creat sau există deja
-                                    Log.d("revev", "Documentul a fost creat sau există deja");
-
-                                    // Adăugați itemId în array-ul "reservationsMap"
-                                    docRef.update("reservationsMap", FieldValue.arrayUnion(itemId))
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        // Elementul "itemId" a fost adăugat cu succes în array
-                                                        Log.d("revev", "Elementul a fost adăugat cu succes în array");
-                                                    } else {
-                                                        // Eroare la adăugarea elementului în array
-                                                        Log.e("revev", "Eroare la adăugarea elementului în array", task.getException());
-                                                    }
-                                                }
-                                            });
+                                    // Elementul "itemId" a fost adăugat cu succes în array
+                                    Log.d("revev", "Elementul a fost adăugat cu succes în array");
                                 } else {
-                                    // Eroare la crearea documentului
-                                    Log.e("revev", "Eroare la crearea documentului", task.getException());
+                                    // Eroare la adăugarea elementului în array
+                                    Log.e("revev", "Eroare la adăugarea elementului în array", task.getException());
+                                    // Tratează eroarea aici, de exemplu:
+                                    if (task.getException() instanceof FirebaseFirestoreException) {
+                                        FirebaseFirestoreException firestoreException = (FirebaseFirestoreException) task.getException();
+                                        if (firestoreException.getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
+                                            // Documentul nu există, trebuie să-l creăm
+                                            Map<String, Object> data = new HashMap<>();
+                                            data.put("reservationsMap", Arrays.asList(itemId));
+                                            docRef.set(data)
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Log.d("revev", "Documentul a fost creat și elementul a fost adăugat cu succes în array");
+                                                                setItems(items);
+                                                            } else {
+                                                                Log.e("revev", "Eroare la crearea documentului și adăugarea elementului în array", task.getException());
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    }
                                 }
                             }
                         });
 
-                }
+                firestore.collection("members").document(memberIdAndNameForReservation.get(1)).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            // Obține lista actuală de istoric de rezervări
+                            List<String> reservationsHistory = (List<String>) document.get("reservationsHistory");
+                            if (reservationsHistory == null) {
+                                reservationsHistory = new ArrayList<>();
+                            }
 
+                            // Construiește o nouă intrare pentru istoricul de rezervări
+                            String reservationEntry = itemId +"-" + "reservation" + "-" + new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date()) + "-" + tvDateInformationForReservation;
+
+                            // Adaugă noua intrare în lista de istoric
+                            reservationsHistory.add(reservationEntry);
+
+                            // Actualizează documentul cu noul istoric de rezervări
+                            firestore.collection("members").document(memberIdAndNameForReservation.get(1)).update("reservationsHistory", reservationsHistory)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(v.getContext(), "Reservation added", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(v.getContext(), "Error adding reservation", Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(v.getContext(), "Member document does not exist", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(v.getContext(), "Failed to get member document", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                }
         });
+
+                holder.btnCancelReserve.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String key = tvDateInformationForReservation; // Înlocuiește cu cheia relevantă
+                        List<String> value = memberIdAndNameForReservation; // Înlocuiește cu valoarea relevantă
+                        // Obține ID-ul elementului
+                        String itemId = items.get(position).getId();
+
+                        // Numele cheii și valoarea de șters
+
+                        // Actualizează documentul
+                        firestore.collection("items").document(itemId).get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // Obține mapa actuală
+                                    Map<String, List<String>> reservationsMap = (Map<String, List<String>>) document.get("reservationsMap");
+                                    if (reservationsMap != null) {
+                                        // Șterge lista pentru cheia specifică
+                                        reservationsMap.remove(key);
+
+                                        // Trimite actualizarea la Firestore
+                                        firestore.collection("items").document(itemId).update("reservationsMap", reservationsMap)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Toast.makeText(v.getContext(), "Reservation deleted", Toast.LENGTH_SHORT).show();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(v.getContext(), "Error deleting reservation", Toast.LENGTH_SHORT).show();
+                                                });
+                                        List<String> reservationsHistory = (List<String>) document.get("reservationsHistory");
+                                        if (reservationsHistory == null) {
+                                            reservationsHistory = new ArrayList<>();
+                                        }
+                                        String reservationEntry =itemId+"-"+memberIdAndNameForReservation.get(0) + "-" +memberIdAndNameForReservation.get(1)+"-"+"cancel_reservation"+"-"+new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date())+"-"+tvDateInformationForReservation;
+
+                                        // Adaugă noua intrare în lista de istoric
+                                        reservationsHistory.add(reservationEntry);
+                                        // Obține lista pentru cheia specifică sau creează una nouă
+
+                                        reservationsMap.put(key, value);
+                                        firestore.collection("items").document(itemId).update("reservationsHistory", reservationsHistory)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Toast.makeText(v.getContext(), "Reservation added", Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else {
+                                        Toast.makeText(v.getContext(), "No reservations to delete", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(v.getContext(), "Document does not exist", Toast.LENGTH_SHORT).show();
+                                }
+                                items.get(position).setReserved(false);
+                                String azi = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date());
+                                if(tvDateInformationForReservation.equals(azi)){
+                                    items.get(position).setReservationVisible(false);
+                                }
+                                else{
+                                    items.get(position).setReservationVisible(true);
+                                }
+                                items.get(position).setReserveButtonVisible(true);
+                                items.get(position).setCancelReserveButtonVisible(false);
+                                setItems(items);
+
+                            } else {
+                                Toast.makeText(v.getContext(), "Failed to get document", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        DocumentReference docRef =firestore.collection("members").document(memberIdAndNameForReservation.get(1)).collection("reservations").document(tvDateInformationForReservation);
+                        docRef.update("reservationsMap", FieldValue.arrayRemove(itemId))
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            // Elementul "itemId" a fost eliminat cu succes din array
+                                            Log.d("revev", "Elementul a fost eliminat cu succes din array");
+                                            Toast.makeText(v.getContext(), "Reservation deleted", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            // Eroare la eliminarea elementului din array
+                                            Log.e("revev", "Eroare la eliminarea elementului din array", task.getException());
+                                            Toast.makeText(v.getContext(), "Error deleting reservation", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                        firestore.collection("members").document(memberIdAndNameForReservation.get(1)).get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // Obține lista actuală de istoric de rezervări
+                                    List<String> reservationsHistory = (List<String>) document.get("reservationsHistory");
+                                    if (reservationsHistory == null) {
+                                        reservationsHistory = new ArrayList<>();
+                                    }
+
+                                    // Construiește o nouă intrare pentru istoricul de rezervări
+                                    String reservationEntry = itemId +"-" + "cancel_reservation" + "-" + new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date()) + "-" + tvDateInformationForReservation;
+
+                                    // Adaugă noua intrare în lista de istoric
+                                    reservationsHistory.add(reservationEntry);
+
+                                    // Actualizează documentul cu noul istoric de rezervări
+                                    firestore.collection("members").document(memberIdAndNameForReservation.get(1)).update("reservationsHistory", reservationsHistory)
+                                            .addOnSuccessListener(aVoid -> {
+                                                Toast.makeText(v.getContext(), "Reservation added", Toast.LENGTH_SHORT).show();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(v.getContext(), "Error adding reservation", Toast.LENGTH_SHORT).show();
+                                            });
+                                } else {
+                                    Toast.makeText(v.getContext(), "Member document does not exist", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(v.getContext(), "Failed to get member document", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
     }
+
     public void setItems(List<Item> itemss) {
+        itemsCopy=items;
         this.items = itemss;
         notifyDataSetChanged(); // Notifică RecyclerView despre schimbările făcute în listă
     }
@@ -223,6 +398,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
     }
     public void updateDate(String newDate) {
         this.tvDateInformationForReservation = newDate;
+        setItems(items);
         notifyDataSetChanged(); // Notifică RecyclerView despre modificare
     }
     public void filterItemsByReserved(boolean isReserved) {
@@ -233,11 +409,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
             }
         }
         // Actualizează lista de elemente din adapter cu lista filtrată
-        items = filteredList;
-        notifyDataSetChanged();
+        setItems(filteredList);
     }
     public void clearFilter() {
-        items = itemsCopy; // Lista filtrată devine lista completă de elemente
+        items = new ArrayList<>(itemsCopy); // Creează o nouă listă din copia originală
         notifyDataSetChanged();
     }
 

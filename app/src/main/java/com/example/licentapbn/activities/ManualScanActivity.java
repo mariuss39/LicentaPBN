@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -17,10 +18,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ManualScanActivity extends AppCompatActivity {
@@ -66,6 +76,7 @@ public class ManualScanActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Void> task) {
                                     }
                                 });
+
                         firestore.collection("members").document(firebaseUser.getUid()).get()
                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
@@ -76,21 +87,54 @@ public class ManualScanActivity extends AppCompatActivity {
                                                 String memberName = document.getString("name");
                                                 Map<String, Object> updates = new HashMap<>();
                                                 updates.put("memberName", memberName);
-                                                if(memberName.equals("Storage")){
-                                                    updates.put("free",true);
-                                                }else{
-                                                    updates.put("free",false);
+                                                updates.put("memberId",firebaseUser.getUid());
+                                                if (memberName.equals("Storage")) {
+                                                    updates.put("free", true);
+                                                } else {
+                                                    updates.put("free", false);
                                                 }
-                                                firestore.collection("items").document(insertedId).update(updates)
-                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                List<String> reservationsHistory = (List<String>) document.get("takingHistory");
+                                                if (reservationsHistory == null) {
+                                                    reservationsHistory = new ArrayList<>();
+                                                }
+                                                String reservationEntry = insertedId + "-" + memberName + "-" + firebaseUser.getUid() + "-" + "take" + "-" + new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date());
+
+                                                // Adaugă noua intrare în lista de istoric
+                                                reservationsHistory.add(reservationEntry);
+                                                firestore.collection("members").document(firebaseUser.getUid()).update("takingHistory", reservationsHistory)
+                                                        .addOnSuccessListener(aVoid -> {
+                                                        });
+
+                                                firestore.collection("items").document(insertedId).get()
+                                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                             @Override
-                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                DocumentSnapshot docc=task.getResult();
+                                                                List<String> reservationsHistoryy = new ArrayList<>();
+                                                                reservationsHistoryy = (List<String>) docc.get("takingHistory");
+                                                                if (reservationsHistoryy == null) {
+                                                                    reservationsHistoryy = new ArrayList<>();
+                                                                }
+                                                                String reservationEntryy = insertedId + "-" + memberName + "-" + firebaseUser.getUid() + "-" + "take" + "-" + new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date());
+                                                                reservationsHistoryy.add(reservationEntryy);
+                                                                firestore.collection("items").document(insertedId).update("takingHistory", reservationsHistoryy)
+                                                                        .addOnSuccessListener(aVoid -> {
+                                                                        });
+                                                                firestore.collection("items").document(insertedId).update("memberId", firebaseUser.getUid())
+                                                                        .addOnSuccessListener(aVoid -> {
+                                                                        });
+                                                                firestore.collection("items").document(insertedId).update("memberName", memberName)
+                                                                        .addOnSuccessListener(aVoid -> {
+                                                                        });
                                                             }
                                                         });
+
+
                                             }
                                         }
                                     }
                                 });
+
 
                     } else {
                         Toast.makeText(getApplicationContext(),"Invalid id",Toast.LENGTH_SHORT).show();
@@ -100,6 +144,10 @@ public class ManualScanActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
+
     }
 
     private void initializaComponents() {
