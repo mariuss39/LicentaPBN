@@ -13,7 +13,9 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.licentapbn.R;
 import com.example.licentapbn.datatype.Item;
@@ -41,6 +43,7 @@ import java.util.Map;
 public class ItemsActivity extends AppCompatActivity {
     List<Item> items = new ArrayList<>();
     RecyclerView recyclerView;
+
     FirebaseUser firebaseUser;
     ProgressDialog progressDialog;
     Button button_filter_available_items;
@@ -184,6 +187,7 @@ public class ItemsActivity extends AppCompatActivity {
                 itemAdapter.setItems(filteredItems);
             }
         });
+
         tvDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

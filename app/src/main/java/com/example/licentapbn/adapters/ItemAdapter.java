@@ -1,6 +1,9 @@
 package com.example.licentapbn.adapters;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.licentapbn.R;
+import com.example.licentapbn.activities.ItemIndividualActivity;
+import com.example.licentapbn.activities.MainActivityUser;
 import com.example.licentapbn.datatype.Item;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -86,6 +91,24 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         holder.tvItemName.setText(items.get(position).getName());
         holder.invisibleLayout.setVisibility(View.GONE);
         Glide.with(context).load(items.get(position).getImageUrl()).into(holder.imageView);
+        holder.infoIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context.getApplicationContext(), "aa",Toast.LENGTH_LONG).show();
+                Intent individualItemIntent=new Intent(context.getApplicationContext(), ItemIndividualActivity.class);
+                individualItemIntent.putExtra("description",items.get(position).getDescription());
+                individualItemIntent.putExtra("id",items.get(position).getId());
+                individualItemIntent.putExtra("size",items.get(position).getSize());
+                individualItemIntent.putExtra("weight",items.get(position).getWeight());
+                individualItemIntent.putExtra("name",items.get(position).getName());
+                individualItemIntent.putExtra("memberName",items.get(position).getMemberName());
+                individualItemIntent.putExtra("memberId",items.get(position).getMemberId());
+                individualItemIntent.putExtra("imageUrl",items.get(position).getImageUrl());
+                Log.e("veva","cevaAdapter1");
+
+                context.startActivity(individualItemIntent);
+            }
+        });
 
         holder.item_cardview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -431,12 +454,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         ConstraintLayout invisibleLayout;
         Button btnReserve;
         Button btnCancelReserve;
+        ImageView infoIcon;
 
 
         public ItemHolder(@NonNull View itemView) {
             super(itemView);
             tvReservationStatusItem=itemView.findViewById(R.id.tv_reservation_status_item);
             tvItemName= itemView.findViewById(R.id.tv_name_item);
+            infoIcon=itemView.findViewById(R.id.info_icon);
             tvItemStatus = itemView.findViewById(R.id.tv_status_item);
             item_cardview=itemView.findViewById(R.id.item_cardview);
             invisibleLayout=itemView.findViewById(R.id.invisible_constraint_layout);
