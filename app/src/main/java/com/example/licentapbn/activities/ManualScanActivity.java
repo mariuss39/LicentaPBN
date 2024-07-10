@@ -86,13 +86,25 @@ public class ManualScanActivity extends AppCompatActivity {
                                             if (document.exists()) {
                                                 String memberName = document.getString("name");
                                                 Map<String, Object> updates = new HashMap<>();
-                                                updates.put("memberName", memberName);
-                                                updates.put("memberId",firebaseUser.getUid());
+                                                updates.put("memberName",memberName);
+                                                boolean ff;
                                                 if (memberName.equals("Storage")) {
-                                                    updates.put("free", true);
+                                                     ff=true;
                                                 } else {
-                                                    updates.put("free", false);
+                                                     ff=false;
                                                 }
+                                                firestore.collection("items").document(insertedId).update("free", ff)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                            }
+                                                        });
+                                                firestore.collection("items").document(insertedId).update("memberName", memberName)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                            }
+                                                        });
                                                 List<String> reservationsHistory = (List<String>) document.get("takingHistory");
                                                 if (reservationsHistory == null) {
                                                     reservationsHistory = new ArrayList<>();

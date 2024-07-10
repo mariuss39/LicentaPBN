@@ -6,6 +6,7 @@ public class MemberWithItems {
     private String name;
     private String phoneNumber;
     private String imageUrl;
+    private List<Item> items;
 
     public MemberWithItems(String name, String phoneNumber, String imageUrl) {
         this.name = name;
@@ -13,9 +14,10 @@ public class MemberWithItems {
         this.imageUrl = imageUrl;
     }
 
-    public MemberWithItems(String name, String phoneNumber, List<Item> itemsOwned) {
+    public MemberWithItems(String name, String phoneNumber, List<Item> itemsOwned,String imageUrl) {
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.imageUrl = imageUrl;
     }
 
     public String getImageUrl() {

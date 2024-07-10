@@ -57,8 +57,8 @@
     android:text="@string/change_picture"
     android:textSize="12sp"
     app:layout_constraintTop_toBottomOf="@id/profileImage"
-    app:layout_constraintStart_toStartOf="@id/profileImage"
-    app:layout_constraintEnd_toEndOf="@id/profileImage"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toStartOf="@id/button_history"
     />
     <Button
         android:clickable="true"
@@ -70,6 +70,19 @@
         android:layout_width="120sp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_history"
+        app:layout_constraintTop_toTopOf="@id/button_change_profile_image_profileActivity"
+        app:layout_constraintBottom_toBottomOf="@id/button_change_profile_image_profileActivity"/>
+    <Button
+        android:clickable="true"
+        android:padding="12dp"
+        android:text="history"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:id="@+id/button_history"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/button_logout"
         app:layout_constraintStart_toEndOf="@id/button_change_profile_image_profileActivity"
         app:layout_constraintTop_toTopOf="@id/button_change_profile_image_profileActivity"
         app:layout_constraintBottom_toBottomOf="@id/button_change_profile_image_profileActivity"/>

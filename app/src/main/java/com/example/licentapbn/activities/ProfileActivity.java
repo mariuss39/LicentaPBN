@@ -3,14 +3,21 @@ package com.example.licentapbn.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.icu.util.LocaleData;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -43,14 +50,19 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
     Button button_logout;
+    Button button_history;
     AnstronCoreHelper anstronCoreHelper;
     Button button_change_profile_picture;
     List<Item> items=new ArrayList<>();
@@ -85,12 +97,196 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
+        button_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDownloadOptions();
+            }
+        });
         button_change_profile_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openImage();
             }
         });
+    }
+    private void showDownloadOptions() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select an option");
+        builder.setItems(new CharSequence[]{"Reservations", "Borrows"},
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                handleReservationsDownload();
+                                break;
+                            case 1:
+                                handleBorrowsDownload();
+                                break;
+                        }
+                    }
+                });
+        builder.show();
+    }
+
+    private void handleReservationsDownload() {
+
+        firestore.collection("members").document(firebaseUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        List<String> dataArray = (List<String>) document.get("reservationsHistory");
+                        if (dataArray != null) {
+                            Log.e("ceva","ceva11");
+                            saveReservationsToFile(dataArray);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void handleBorrowsDownload() {
+        firestore.collection("members").document(firebaseUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        List<String> dataArray = (List<String>) document.get("takingHistory");
+                        if (dataArray != null) {
+                            Log.e("ceva","ceva11");
+                            saveBorrowsToFile(dataArray);
+                        }
+                    }
+                }
+            }
+        });
+    }
+    private void saveBorrowsToFile(List<String> array) {
+        Log.e("veva", "ceva10");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String item : array) {
+            // Split each string into its components
+            String[] parts = item.split("-");
+            if (parts.length == 5) {
+                String id = parts[0];
+                String action = parts[3];
+                String date = parts[4];
+                Log.e("ceva", "ceva12");
+
+                // Format the string as desired
+                stringBuilder.append("Item id: ").append(id).append("\n");
+                Log.e("ceva", "ceva13");
+                //stringBuilder.append("Item Name: ").append(items.get(Integer.parseInt(id)).getName()).append("\n");
+                Log.e("ceva", "ceva4");
+                stringBuilder.append("Action type: ").append(action).append("\n");
+                stringBuilder.append("Date initialized: ").append(date).append("\n");
+                stringBuilder.append("---------------\n");
+                Log.e("ceva", "ceva5");
+            } else {
+                stringBuilder.append(item).append("\n");
+            }
+        }
+        String dataString = stringBuilder.toString();
+        LocalDate today = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            today = LocalDate.now();
+        }
+        try {
+            // Create a file in the Downloads directory
+            File downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!downloadsDirectory.exists()) {
+                downloadsDirectory.mkdirs();
+                Log.e("ceva", "ceva1");
+            }
+
+            String fileName = "borrows_" + today.toString() + ".txt";
+            File file = new File(downloadsDirectory, fileName);
+
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(dataString.getBytes());
+            fos.close();
+            Log.e("ceva", "ceva2");
+            Toast.makeText(this, "File saved to " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            openFile(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving file", Toast.LENGTH_SHORT).show();
+            Log.e("ceva", "ceva3");
+        }
+    }
+    private void openFile(File file) {
+        Uri fileUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".fileprovider", file);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(fileUri, "text/plain");  // Setează tipul MIME adecvat fișierului tău
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);  // Acordă permisiuni de citire
+
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "No app found to open this file", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveReservationsToFile(List<String> array){
+        Log.e("ceva","ceva10");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String item : array) {
+            // Split each string into its components
+            String[] parts = item.split("-");
+            if (parts.length == 4) {
+                String id = parts[0];
+                String type = parts[1];
+                String action = parts[2];
+                String date = parts[3];
+                Log.e("ceva","ceva12");
+
+                // Format the string as desired
+                stringBuilder.append("Item id: ").append(id).append("\n");
+                Log.e("ceva","ceva13");
+                //stringBuilder.append("Item Name: ").append(items.get(Integer.parseInt(id)).getName()).append("\n");
+                Log.e("ceva","ceva4");
+                stringBuilder.append("Action type: ").append(type).append("\n");
+                stringBuilder.append("Date initialized: ").append(action).append("\n");
+                stringBuilder.append("For date: ").append(date).append("\n");
+                stringBuilder.append("---------------\n");
+                Log.e("ceva","ceva5");
+            } else {
+                stringBuilder.append(item).append("\n");
+            }
+        }
+        String dataString = stringBuilder.toString();
+        LocalDate today = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            today = LocalDate.now();
+        }
+        try {
+            // Create a file in the Downloads directory
+            File downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!downloadsDirectory.exists()) {
+                downloadsDirectory.mkdirs();
+                Log.e("ceva","ceva1");
+            }
+
+            String fileName = "reservations_" + today.toString() + ".txt";
+            File file = new File(downloadsDirectory, fileName);
+
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(dataString.getBytes());
+            fos.close();
+            Log.e("ceva","ceva2");
+            Toast.makeText(this, "File saved to " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            openFile(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving file", Toast.LENGTH_SHORT).show();
+            Log.e("ceva","ceva3");
+        }
+
     }
     private void uploadImage(){
         final ProgressDialog progressDialog=new ProgressDialog(this);
@@ -207,13 +403,13 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
-
     private void initializeComponents() {
         getSupportActionBar().setTitle(R.string.profile);
         anstronCoreHelper=new AnstronCoreHelper(this);
         button_logout=findViewById(R.id.button_logout);
         imageView_profile_picture=findViewById(R.id.profileImage);
         button_change_profile_picture=findViewById(R.id.button_change_profile_image_profileActivity);
+        button_history=findViewById(R.id.button_history);
         firestore=FirebaseFirestore.getInstance();
         firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
         tv_name=findViewById(R.id.tv_name_profileActivity);
