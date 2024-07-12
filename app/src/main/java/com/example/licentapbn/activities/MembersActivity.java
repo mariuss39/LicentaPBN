@@ -69,9 +69,11 @@ public class MembersActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot memberDocument : membersResult) {
 
                     String memberPhoneNumber =(String) memberDocument.get("phoneNumber");
+                    String memberID =(String) memberDocument.get("id");
+                    String memberEmail =(String) memberDocument.get("email");
                     String memberName = (String) memberDocument.get("name");
                     String memberImageURl= (String) memberDocument.get("imageUrl");
-                    MemberWithItems memberWithItems = new MemberWithItems(memberName, memberPhoneNumber,memberImageURl);
+                    MemberWithItems memberWithItems = new MemberWithItems(memberID,memberEmail,memberName, memberPhoneNumber,memberImageURl);
                     membersWithItems.add(memberWithItems);
                     memberAdapter.notifyDataSetChanged();
                     if (progressDialog.isShowing()) {

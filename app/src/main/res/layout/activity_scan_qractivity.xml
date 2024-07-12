@@ -15,14 +15,14 @@
         app:frameVerticalBias="0.25"
         app:frameColor="@color/red_bright"
         app:frameCornersRadius="0dp"
-        app:frameCornersSize="100dp"
+        app:frameCornersSize="50dp"
         app:frameSize="0.75"
-        app:frameThickness="5dp"
+        app:frameThickness="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:maskColor="@color/grey_hint">
+        app:maskColor="#85000000">
 
     </com.budiyev.android.codescanner.CodeScannerView>
 
@@ -32,9 +32,9 @@
         android:gravity="center"
         android:id="@+id/tv_scan_qr_activity"
         android:text="Scan Item"
-        android:textSize="26sp"
+        android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/guideline60percent_qr_scanner_activity" />

@@ -5,7 +5,7 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.cardview.widget.CardView
-        android:id="@+id/item_cardview"
+        android:id="@+id/item_cardviewProfile"
         android:layout_width="match_parent"
         app:cardCornerRadius="20dp"
         android:elevation="20dp"
@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
-                android:id="@+id/recyclerImage"
+                android:id="@+id/recyclerImageprofilepage"
                 android:layout_width="80sp"
                 android:layout_height="60sp"
                 android:scaleType="fitCenter"
@@ -27,39 +27,32 @@
                 />
             <TextView
                 android:textColor="@color/black"
-                android:id="@+id/tv_name_item"
+                android:id="@+id/tv_name_item_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Nume item"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textAlignment="center"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/tv_item_weight"
-                app:layout_constraintStart_toEndOf="@+id/recyclerImage"
+                app:layout_constraintBottom_toTopOf="@id/tv_id_recycler_profilepage"
+                app:layout_constraintStart_toEndOf="@id/recyclerImageprofilepage"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
-                <TextView
-                    android:id="@+id/tv_item_weight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Item Weight"
-                    android:textColor="#333333"
-                    android:layout_marginTop="20dp"
-                    android:textSize="12sp"
-                    app:layout_constraintTop_toBottomOf="@id/tv_name_item"
-                    app:layout_constraintStart_toEndOf="@id/recyclerImage"
-                    />
-                <TextView
-                    android:id="@+id/tv_item_size"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Item Size"
-                    android:textSize="12sp"
-                    android:textColor="#333333"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintTop_toBottomOf="@id/tv_name_item"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    />
+            <TextView
+                android:textColor="@color/black"
+                android:id="@+id/tv_id_recycler_profilepage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Id item"
+                android:textSize="12sp"
+                android:textAlignment="center"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@id/recyclerImageprofilepage"
+                app:layout_constraintTop_toBottomOf="@id/tv_name_item_profile"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

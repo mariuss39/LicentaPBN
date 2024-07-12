@@ -63,7 +63,7 @@ public class ScanQRActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
                                     if (document.exists()) {
-                                        tv_scanItems_qr_code.setText("Item scanned: " + document.getString("name"));
+                                        tv_scanItems_qr_code.setText(document.getString("name"));
                                         vibrateShort();
                                         firestore.collection(getString(R.string.items)).document(itemId).update(getString(R.string.memberid), firebaseUser.getUid())
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {

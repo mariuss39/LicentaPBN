@@ -45,16 +45,8 @@ public class ItemAdapterMemberPageActivity extends RecyclerView.Adapter<ItemAdap
     @Override
     public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
         holder.tvname.setText(items.get(position).getName());
-        holder.tvid.setText(items.get(position).getId());
-        holder.tvstatus.setText("Status");
+        holder.tvid.setText("Id:"+items.get(position).getId());
         Glide.with(context).load(items.get(position).getImageUrl()).into(holder.imageView);
-        if (items.get(position).isStatusVisible()) {
-            holder.tvstatus.setVisibility(View.VISIBLE);
-            holder.tvstatus.setText("Reserved");
-            holder.tvstatus.setTextColor(Color.parseColor("#ffb703"));
-        } else {
-            holder.tvstatus.setVisibility(View.INVISIBLE);
-        }
     }
     public void filterItemsByFree(boolean isFree) {
         List<Item> filteredList = new ArrayList<>();
@@ -95,13 +87,12 @@ public class ItemAdapterMemberPageActivity extends RecyclerView.Adapter<ItemAdap
 
 
     public static class ItemHolder extends RecyclerView.ViewHolder {
-        TextView tvname,tvstatus,tvid;
+        TextView tvname,tvid;
         ImageView imageView;
         CardView item_cardview;
         public ItemHolder(@NonNull View itemView) {
             super(itemView);
             tvname= itemView.findViewById(R.id.tv_name_item_memberPage);
-            tvstatus= itemView.findViewById(R.id.tv_status_memberpage_recycler);
             tvid= itemView.findViewById(R.id.tv_id_recycler_memberpage);
             item_cardview=itemView.findViewById(R.id.item_cardview_memberPage);
             imageView=itemView.findViewById(R.id.recyclerMemberPageImage);

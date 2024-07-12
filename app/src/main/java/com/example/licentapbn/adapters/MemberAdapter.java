@@ -51,6 +51,8 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberHold
                 memberPageIntent.putExtra("phoneNumber",membersWithItems.get(position).getPhoneNumber());
                 memberPageIntent.putExtra("name",membersWithItems.get(position).getName());
                 memberPageIntent.putExtra("imageUrl",membersWithItems.get(position).getImageUrl());
+                memberPageIntent.putExtra("id",membersWithItems.get(position).getId());
+                memberPageIntent.putExtra("email",membersWithItems.get(position).getEmail());
                 context.startActivity(memberPageIntent);
             }
         });

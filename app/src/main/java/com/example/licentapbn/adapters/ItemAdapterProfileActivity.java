@@ -40,11 +40,7 @@ public class ItemAdapterProfileActivity extends RecyclerView.Adapter<ItemAdapter
     @Override
     public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
         holder.tv1.setText(items.get(position).getName());
-        for(Item item: items){
-            item.setExpanded(false);
-        }
-        holder.tvItemWeight.setText("Weight: "+items.get(position).getWeight());
-        holder.tvItemSize.setText("Size: "+items.get(position).getSize());
+        holder.tvid.setText("Id: "+items.get(position).getId());
         Glide.with(context).load(items.get(position).getImageUrl()).into(holder.imageView);
     }
     public void filterItemsByFree(boolean isFree) {
@@ -86,16 +82,15 @@ public class ItemAdapterProfileActivity extends RecyclerView.Adapter<ItemAdapter
 
 
     public static class ItemHolder extends RecyclerView.ViewHolder {
-        TextView tv1,tvItemWeight,tvItemSize;
+        TextView tv1,tvid;
         ImageView imageView;
         CardView item_cardview;
         public ItemHolder(@NonNull View itemView) {
             super(itemView);
-            tv1 = itemView.findViewById(R.id.tv_name_item);
-            tvItemWeight = itemView.findViewById(R.id.tv_item_weight);
-            tvItemSize=itemView.findViewById(R.id.tv_item_size);
-            item_cardview=itemView.findViewById(R.id.item_cardview);
-            imageView=itemView.findViewById(R.id.recyclerImage);
+            tv1 = itemView.findViewById(R.id.tv_name_item_profile);
+            tvid=itemView.findViewById(R.id.tv_id_recycler_profilepage);
+            item_cardview=itemView.findViewById(R.id.item_cardviewProfile);
+            imageView=itemView.findViewById(R.id.recyclerImageprofilepage);
         }
 
     }

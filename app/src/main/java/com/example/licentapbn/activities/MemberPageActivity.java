@@ -41,7 +41,7 @@ public class MemberPageActivity extends AppCompatActivity {
     TextView tvName;
     TextView tvPhoneNumber;
     RecyclerView recyclerView;
-    TextView tvDate;
+    TextView tvEmail;
     ItemAdapterMemberPageActivity itemAdapterMemberPageActivity;
     List<Item> takenItems=new ArrayList<>();
     ProgressDialog progressDialog;
@@ -49,7 +49,9 @@ public class MemberPageActivity extends AppCompatActivity {
     ImageView imageViewMemberPicture;
     String intentPhoneNumber;
     String intentName;
+    String intentEmail;
     String intentImageUrl;
+    String intentID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,122 +59,32 @@ public class MemberPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_member_page);
         initializeComponents();
        itemsDataChangdListen();
-
-        tvDate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                if ((new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date())).equals(tvDate.getText().toString())) {
-
-                    for (Item item : takenItems) {
-                        item.setStatusVisible(false);
-                    }
-                } else {
-                    for (Item item : takenItems) {
-                        item.setStatusVisible(true);
-                    }
-                }
-                itemAdapterMemberPageActivity.notifyDataSetChanged();
-            }
-        });
-        tvDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MaterialDatePicker<Long> materialDatePicker=MaterialDatePicker.Builder.datePicker().setTitleText("Select date").
-                        setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build();
-                materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
-                    @Override
-                    public void onPositiveButtonClick(Long selection) {
-                        String selectedDate = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date(selection));
-                        tvDate.setText(selectedDate);
-                        String todayDate = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date());
-                        if (selectedDate.equals(todayDate)) {
-                            tvDate.setText(todayDate);
-                            itemAdapterMemberPageActivity.clearFilter();
-                        } else {
-                            //
-                            firestore.collection("members")
-                                    .whereEqualTo("phoneNumber", intentPhoneNumber)
-                                    .get()
-                                    .addOnCompleteListener(task -> {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                // Obține ID-ul documentului
-                                                String memberDocumentId = document.getId();
-                                                firestore.collection("members").document(memberDocumentId).collection("reservations")
-                                                        .document(String.valueOf(tvDate.getText()))
-                                                        .get()
-                                                        .addOnCompleteListener(subDocumentTask -> {
-                                                            if (subDocumentTask.isSuccessful()) {
-                                                                DocumentSnapshot subDocument = subDocumentTask.getResult();
-                                                                if (subDocument.exists()) {
-                                                                    List<String> reserveditemsIdList = (List<String>) subDocument.get("reservedItemsId");
-                                                                    List<Item> filteredItems = new ArrayList<>();
-                                                                    for (Item item : takenItems) {
-                                                                        if (reserveditemsIdList.contains(item.getId())) {
-                                                                            filteredItems.add(item);
-                                                                            Log.e("TTTT", item.getId());
-
-                                                                        }
-                                                                    }
-//                                                                itemAdapterMemberPageActivity.setItems(filteredItems);
-                                                                    Log.e("TTTT", " EXISTA DATA1");
-                                                                    itemAdapterMemberPageActivity.setItems(filteredItems);
-                                                                    Log.e("TTTT", " EXISTA DATA2");
-
-                                                                } else {
-                                                                    List<Item> filteredItems = new ArrayList<>();
-                                                                    itemAdapterMemberPageActivity.setItems(filteredItems);
-                                                                    // Documentul nu există
-                                                                    Log.e("TTTT", "NU EXISTA DATA");
-                                                                }
-                                                            } else {
-                                                                Toast.makeText(getApplicationContext(), "Error getting the information for this day", Toast.LENGTH_LONG).show();
-                                                                // Tratează cazul în care nu poți obține documentul
-                                                                Log.e("TTTT", "NU pot obtine doc");
-
-                                                            }
-                                                        });
-                                            }
-                                        } else {
-                                            Log.d("TAG", "Error getting documents: ", task.getException());
-                                        }
-                                    });
-                            //
-                        }
-                    }
-                });
-
-                materialDatePicker.show(getSupportFragmentManager(),"tag");
-            }
-        });
-
     }
 
     private void initializeComponents() {
         firestore= FirebaseFirestore.getInstance();
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Fetching data...");
-        tvDate=findViewById(R.id.tvDate);
         itemAdapterMemberPageActivity=new ItemAdapterMemberPageActivity(MemberPageActivity.this,takenItems);
         progressDialog.setCancelable(false);
         progressDialog.show();
         tvName=findViewById(R.id.tv_name_MemberPageActivity);
         tvPhoneNumber=findViewById(R.id.tv_phoneNumber_memberPageActivity);
+        tvEmail=findViewById(R.id.tv_email_profileActivity);
         imageViewMemberPicture=findViewById(R.id.MemberPageMemberImage);
         recyclerView=findViewById(R.id.recyclerview_items_taken_MemberPageActivity);
         recyclerView.setAdapter(itemAdapterMemberPageActivity);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        tvDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(new Date()));
         Intent intent = getIntent();
         if(intent != null) {
-             intentPhoneNumber= intent.getStringExtra("phoneNumber");
+            intentEmail=intent.getStringExtra("email");
+            intentID=intent.getStringExtra("id");
+            tvEmail.setText(intentEmail);
+            intentPhoneNumber= intent.getStringExtra("phoneNumber");
             tvPhoneNumber.setText(intentPhoneNumber);
             intentName=intent.getStringExtra("name");
+            getSupportActionBar().setTitle(intentName);
             tvName.setText(intentName);
             intentImageUrl=intent.getStringExtra("imageUrl");
             Glide.with(this).load(intentImageUrl).apply(new RequestOptions().centerCrop()).into(imageViewMemberPicture);
@@ -180,7 +92,7 @@ public class MemberPageActivity extends AppCompatActivity {
     }
 
     private void itemsDataChangdListen() {
-        firestore.collection(getString(R.string.items)).whereEqualTo("memberName",tvName.getText())
+        firestore.collection(getString(R.string.items)).whereEqualTo("memberId",intentID)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
